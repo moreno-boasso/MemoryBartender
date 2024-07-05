@@ -11,9 +11,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        fontFamily: 'Epilogue',
-        primaryColor: MemoColors.brownie,
-        splashColor: MemoColors.beige
+          fontFamily: 'Epilogue',
+          primaryColor: MemoColors.brownie,
+          splashColor: MemoColors.beige
       ),
       home: SplashScreen(),
     );
