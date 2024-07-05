@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import '../components/search_screen/search_bar.dart';
 import '../models/cocktail.dart';
 import '../components/search_screen/cocktail_grid.dart';
+import '../styles/colors.dart';
+import '../styles/texts.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -101,24 +103,29 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cocktail Recipes'),
+        surfaceTintColor: MemoColors.white,
+        title: const Text('Cocktail Recipes',style: MemoText.titleScreen,),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const SizedBox(height: 10.0),
-          const CustomSearchBar(),
-          const SizedBox(height: 15.0),
-          CocktailGrid(
-            scrollController: _scrollController,
-            cocktails: _cocktails,
-            isLoading: _isLoading,
-          ),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const CustomSearchBar(),
+            const SizedBox(height: 10.0),
+            Expanded(
+              child: CocktailGrid(
+                scrollController: _scrollController,
+                cocktails: _cocktails,
+                isLoading: _isLoading,
+              ),
             ),
-        ],
+            if (_isLoading)
+              const Center(
+                child: CircularProgressIndicator(),
+              ),
+          ],
+        ),
       ),
     );
   }

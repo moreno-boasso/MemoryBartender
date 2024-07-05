@@ -35,7 +35,7 @@ class CocktailDetailsDialog extends StatelessWidget {
                 child: AutoSizeText(
                   cocktail.name,
                   textAlign: TextAlign.center,
-                  style: MemoText.titleCard,
+                  style: MemoText.titleScreen,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

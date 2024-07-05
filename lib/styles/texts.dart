@@ -4,9 +4,10 @@ import 'colors.dart';
 
 class MemoText {
   static const TextStyle titleScreen = TextStyle(
-    fontSize: 24.0,
+    fontSize: 28.0,
     fontWeight: FontWeight.w900,
     color: MemoColors.black,
+
   );
   static const TextStyle titleCard = TextStyle(
       fontSize: 18,
@@ -15,7 +16,7 @@ class MemoText {
   );
   static const TextStyle alcoolCard = TextStyle(
       fontSize: 14,
-      fontWeight: FontWeight.w300,
+      fontWeight: FontWeight.w100,
       color: MemoColors.black
   );
 }
