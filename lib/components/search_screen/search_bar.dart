@@ -4,7 +4,7 @@ import '../../styles/colors.dart';
 class CustomSearchBar extends StatefulWidget {
   final Function(String, String, bool) onSearch;
 
-  const CustomSearchBar({required this.onSearch, super.key});
+  const CustomSearchBar({required this.onSearch, Key? key}) : super(key: key);
 
   @override
   _CustomSearchBarState createState() => _CustomSearchBarState();
@@ -15,8 +15,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   String _selectedFilter = 'Nome'; // Inizialmente selezionato 'Nome'
 
   String get hintText {
-    if ( == 'Nome') {
-      return 'Cerca cocktails...';
+    if (_selectedFilter == 'Nome') {
+      return 'Cerca cocktail...';
     } else if (_selectedFilter == 'Ingrediente') {
       return 'Cerca ingrediente...';
     }
@@ -53,7 +53,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Row(
           children: [
-            const SizedBox(width: 10.0),
             const Icon(Icons.search_outlined, color: MemoColors.brownie),
             const SizedBox(width: 10.0),
             Expanded(
@@ -71,19 +70,21 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 },
               ),
             ),
-            DropdownButton<String>(
-              value: _selectedFilter,
-              items: <String>['Nome', 'Ingrediente'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedFilter = newValue!;
-                });
-              },
+            DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedFilter,
+                items: <String>['Nome', 'Ingrediente'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedFilter = newValue!;
+                  });
+                },
+              ),
             ),
           ],
         ),
