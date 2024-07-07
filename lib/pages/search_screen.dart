@@ -20,6 +20,8 @@ class _SearchScreenState extends State<SearchScreen> {
   late String _currentLetter;
   final CocktailService _cocktailService = CocktailService();
 
+  bool _isManualSearch = false; // Aggiunto booleano per indicare ricerca manuale
+
   @override
   void initState() {
     super.initState();
@@ -53,12 +55,13 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  Future<void> _searchCocktails(String query, String filter) async {
+  Future<void> _searchCocktails(String query, String filter, bool isManualSearch) async {
     if (_isLoading) return;
 
     setState(() {
       _isLoading = true;
       _cocktails.clear();
+      _isManualSearch = isManualSearch; // Imposta il flag _isManualSearch
     });
 
     try {
@@ -82,6 +85,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _scrollListener() {
+    if (_isManualSearch) return; // Se la ricerca è manuale, non eseguire lo scrollListener
+
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       _fetchCocktails(_currentLetter);
     }
