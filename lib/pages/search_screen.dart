@@ -66,9 +66,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
     try {
       List<Cocktail> fetchedCocktails = [];
-      if (filter == 'name') {
+      if (filter == 'Nome') {
         fetchedCocktails = await _cocktailService.searchCocktailsByName(query);
-      } else if (filter == 'ingredient') {
+      } else if (filter == 'Ingrediente') {
         fetchedCocktails = await _cocktailService.searchCocktailsByIngredient(query);
       }
 

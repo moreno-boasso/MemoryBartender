@@ -12,7 +12,16 @@ class CustomSearchBar extends StatefulWidget {
 
 class _CustomSearchBarState extends State<CustomSearchBar> {
   final TextEditingController _controller = TextEditingController();
-  String _selectedFilter = 'name';
+  String _selectedFilter = 'Nome'; // Inizialmente selezionato 'Nome'
+
+  String get hintText {
+    if ( == 'Nome') {
+      return 'Cerca cocktails...';
+    } else if (_selectedFilter == 'Ingrediente') {
+      return 'Cerca ingrediente...';
+    }
+    return '';
+  }
 
   @override
   void initState() {
@@ -51,7 +60,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               child: TextField(
                 controller: _controller,
                 decoration: InputDecoration(
-                  hintText: 'Cerca cocktails...',
+                  hintText: hintText, // Utilizza il valore dinamico di hintText
                   hintStyle: TextStyle(color: MemoColors.brownie.withOpacity(0.8)),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
@@ -64,10 +73,10 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             ),
             DropdownButton<String>(
               value: _selectedFilter,
-              items: <String>['name', 'ingredient'].map((String value) {
+              items: <String>['Nome', 'Ingrediente'].map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value.capitalize()),
+                  child: Text(value),
                 );
               }).toList(),
               onChanged: (newValue) {
@@ -80,12 +89,5 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         ),
       ),
     );
-  }
-}
-
-
-extension StringExtension on String {
-  String capitalize() {
-    return this[0].toUpperCase() + substring(1);
   }
 }
