@@ -41,6 +41,14 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     }
   }
 
+  void _onFilterChanged(String? newValue) {
+    setState(() {
+      _selectedFilter = newValue!;
+      _controller.clear(); // Questa riga cancella il testo nel TextField
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -79,13 +87,10 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                     child: Text(value),
                   );
                 }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedFilter = newValue!;
-                  });
-                },
+                onChanged: _onFilterChanged, // Chiamata al metodo _onFilterChanged
               ),
             ),
+
           ],
         ),
       ),
