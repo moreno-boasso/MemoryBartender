@@ -1,14 +1,13 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import '../components/search_screen/search_bar.dart';
 import '../models/cocktail.dart';
 import '../components/search_screen/cocktail_grid.dart';
 import '../styles/colors.dart';
 import '../styles/texts.dart';
+import '../services/cocktail_service.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({super.key});
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -19,7 +18,7 @@ class _SearchScreenState extends State<SearchScreen> {
   late List<Cocktail> _cocktails;
   late bool _isLoading;
   late String _currentLetter;
-  final String _baseUrl = 'https://www.thecocktaildb.com/api/json/v1/1';
+  final CocktailService _cocktailService = CocktailService();
 
   @override
   void initState() {
@@ -39,29 +38,13 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     try {
-      final response = await http.get(
-        Uri.parse('$_baseUrl/search.php?f=$identifier'),
-      );
+      List<Cocktail> fetchedCocktails = await _cocktailService.getCocktailsByFirstLetter(identifier);
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        final List<dynamic> drinks = data['drinks'];
-
-        List<Cocktail> fetchedCocktails = drinks.map((json) =>
-            Cocktail(
-              name: json['strDrink'],
-              imageUrl: json['strDrinkThumb'],
-              isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-            )).toList();
-
-        setState(() {
-          _cocktails.addAll(fetchedCocktails);
-          _currentLetter = _getNextIdentifier(identifier);
-          _isLoading = false;
-        });
-      } else {
-        throw Exception('Failed to load cocktails');
-      }
+      setState(() {
+        _cocktails.addAll(fetchedCocktails);
+        _currentLetter = _cocktailService.getNextIdentifier(identifier);
+        _isLoading = false;
+      });
     } catch (e) {
       debugPrint('Error loading cocktails: $e');
       setState(() {
@@ -70,19 +53,31 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  String _getNextIdentifier(String currentIdentifier) {
-    int nextCodeUnit = currentIdentifier.codeUnitAt(0) + 1;
+  Future<void> _searchCocktails(String query, String filter) async {
+    if (_isLoading) return;
 
-    // Salta 'u' e 'x' che sono vuoti
-    while (nextCodeUnit == 117 || nextCodeUnit == 120) {
-      nextCodeUnit++;
-    }
+    setState(() {
+      _isLoading = true;
+      _cocktails.clear();
+    });
 
-    // Se il prossimo carattere è oltre 'z', ritorna ''
-    if (nextCodeUnit > 122) {
-      return '';
-    } else {
-      return String.fromCharCode(nextCodeUnit);
+    try {
+      List<Cocktail> fetchedCocktails = [];
+      if (filter == 'name') {
+        fetchedCocktails = await _cocktailService.searchCocktailsByName(query);
+      } else if (filter == 'ingredient') {
+        fetchedCocktails = await _cocktailService.searchCocktailsByIngredient(query);
+      }
+
+      setState(() {
+        _cocktails = fetchedCocktails;
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Error searching cocktails: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -104,14 +99,14 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: MemoColors.white,
-        title: const Text('Cocktail Recipes',style: MemoText.titleScreen,),
+        title: const Text('Cocktail Recipes', style: MemoText.titleScreen,),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const CustomSearchBar(),
+            CustomSearchBar(onSearch: _searchCocktails),
             const SizedBox(height: 10.0),
             Expanded(
               child: CocktailGrid(

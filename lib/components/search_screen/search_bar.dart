@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../styles/colors.dart';
 
-class CustomSearchBar extends StatelessWidget {
-  const CustomSearchBar({super.key});
+class CustomSearchBar extends StatefulWidget {
+  final Function(String, String) onSearch;
+
+  const CustomSearchBar({required this.onSearch, super.key});
+
+  @override
+  _CustomSearchBarState createState() => _CustomSearchBarState();
+}
+
+class _CustomSearchBarState extends State<CustomSearchBar> {
+  final TextEditingController _controller = TextEditingController();
+  String _selectedFilter = 'name';
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +31,7 @@ class CustomSearchBar extends StatelessWidget {
             const SizedBox(width: 10.0),
             Expanded(
               child: TextField(
+                controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Cerca cocktails...',
                   hintStyle: TextStyle(color: MemoColors.brownie.withOpacity(0.8)),
@@ -28,11 +39,34 @@ class CustomSearchBar extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                 ),
                 style: const TextStyle(fontSize: 16.0),
+                onSubmitted: (value) {
+                  widget.onSearch(value, _selectedFilter);
+                },
               ),
+            ),
+            DropdownButton<String>(
+              value: _selectedFilter,
+              items: <String>['name', 'ingredient'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value.capitalize()),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedFilter = newValue!;
+                });
+              },
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return this[0].toUpperCase() + substring(1);
   }
 }
