@@ -66,6 +66,15 @@ class CocktailDetailsScreen extends StatelessWidget {
               cocktail.instructions,
               style: TextStyle(fontSize: 16.0),
             ),
+            SizedBox(height: 8.0),
+            Text(
+              'Glass:',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              cocktail.glass,
+              style: TextStyle(fontSize: 16.0),
+            ),
           ],
         ),
       ),
