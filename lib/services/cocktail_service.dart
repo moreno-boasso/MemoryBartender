@@ -16,14 +16,9 @@ class CocktailService {
         final Map<String, dynamic> data = json.decode(response.body);
         final List<dynamic> drinks = data['drinks'];
 
-        List<Cocktail> cocktails = drinks.map((json) =>
-            Cocktail(
-              name: json['strDrink'],
-              imageUrl: json['strDrinkThumb'],
-              isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-            )).toList();
+        List<Cocktail> cocktails = drinks.map((json) => Cocktail.fromJson(json)).toList();
         return cocktails;
-            } else {
+      } else {
         throw Exception('Failed to load cocktails');
       }
     } catch (e) {
@@ -31,6 +26,7 @@ class CocktailService {
       throw Exception('Failed to load cocktails: $e');
     }
   }
+
 
   Future<List<Cocktail>> searchCocktailsByName(String name) async {
     try {
@@ -40,13 +36,9 @@ class CocktailService {
         final Map<String, dynamic> data = json.decode(response.body);
         final List<dynamic> drinks = data['drinks'];
 
-        return drinks.map((json) =>
-            Cocktail(
-              name: json['strDrink'],
-              imageUrl: json['strDrinkThumb'],
-              isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-            )).toList();
-            } else {
+        List<Cocktail> cocktails = drinks.map((json) => Cocktail.fromJson(json)).toList();
+        return cocktails;
+      } else {
         throw Exception('Failed to load cocktails');
       }
     } catch (e) {
@@ -63,13 +55,9 @@ class CocktailService {
         final Map<String, dynamic> data = json.decode(response.body);
         final List<dynamic> drinks = data['drinks'];
 
-        return drinks.map((json) =>
-            Cocktail(
-              name: json['strDrink'],
-              imageUrl: json['strDrinkThumb'],
-              isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-            )).toList();
-            } else {
+        List<Cocktail> cocktails = drinks.map((json) => Cocktail.fromJson(json)).toList();
+        return cocktails;
+      } else {
         throw Exception('Failed to load cocktails');
       }
     } catch (e) {
@@ -77,6 +65,7 @@ class CocktailService {
       throw Exception('Failed to load cocktails: $e');
     }
   }
+
 
   String getNextIdentifier(String currentIdentifier) {
     int nextCodeUnit = currentIdentifier.codeUnitAt(0) + 1;

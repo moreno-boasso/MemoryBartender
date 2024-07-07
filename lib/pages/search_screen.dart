@@ -7,7 +7,7 @@ import '../styles/texts.dart';
 import '../services/cocktail_service.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({super.key});
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -113,23 +113,23 @@ class _SearchScreenState extends State<SearchScreen> {
           children: <Widget>[
             CustomSearchBar(onSearch: _searchCocktails),
             const SizedBox(height: 10.0),
-            Expanded(
-              child: _cocktails.isEmpty && !_isLoading
-                  ? Center(
+            if (_cocktails.isEmpty && !_isLoading)
+              const Center(
                 child: Text('Nessun cocktail trovato'),
               )
-                  : CocktailGrid(
+            else
+              CocktailGrid(
                 scrollController: _scrollController,
                 cocktails: _cocktails,
                 isLoading: _isLoading,
               ),
-            ),
             if (_isLoading)
               const Center(
                 child: CircularProgressIndicator(),
               ),
           ],
         ),
+
       ),
     );
   }

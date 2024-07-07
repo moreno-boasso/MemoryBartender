@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart'; // Importa AutoSizeText
 import '../../styles/colors.dart';
 
 class CustomSearchBar extends StatefulWidget {
   final Function(String, String, bool) onSearch;
 
-  const CustomSearchBar({required this.onSearch, Key? key}) : super(key: key);
+  const CustomSearchBar({required this.onSearch, super.key});
 
   @override
   _CustomSearchBarState createState() => _CustomSearchBarState();
@@ -48,7 +49,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -67,12 +67,12 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               child: TextField(
                 controller: _controller,
                 decoration: InputDecoration(
-                  hintText: hintText, // Utilizza il valore dinamico di hintText
-                  hintStyle: TextStyle(color: MemoColors.brownie.withOpacity(0.8)),
+                  hintText: hintText,
+                  hintStyle: TextStyle(color: MemoColors.brownie.withOpacity(0.8),fontSize: 14),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                 ),
-                style: const TextStyle(fontSize: 16.0),
+                style: const TextStyle(fontSize: 14.0),
                 onSubmitted: (value) {
                   widget.onSearch(value, _selectedFilter, true); // true indica ricerca manuale
                 },
@@ -84,13 +84,16 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 items: <String>['Nome', 'Ingrediente'].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: AutoSizeText(
+                      value,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: 14.0), //todo: MemoText style
+                    ),
                   );
                 }).toList(),
                 onChanged: _onFilterChanged, // Chiamata al metodo _onFilterChanged
               ),
             ),
-
           ],
         ),
       ),
