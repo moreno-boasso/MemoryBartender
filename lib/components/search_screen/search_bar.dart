@@ -4,7 +4,7 @@ import '../../styles/colors.dart';
 class CustomSearchBar extends StatefulWidget {
   final Function(String, String, bool) onSearch;
 
-  const CustomSearchBar({required this.onSearch, Key? key}) : super(key: key);
+  const CustomSearchBar({required this.onSearch, super.key});
 
   @override
   _CustomSearchBarState createState() => _CustomSearchBarState();

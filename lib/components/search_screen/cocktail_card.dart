@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
 import '../../models/cocktail.dart';
+import '../../pages/cocktail_detail_screen.dart';
 import '../../styles/texts.dart';
-import 'card_preview.dart';
 
 class CocktailCard extends StatelessWidget {
   final Cocktail cocktail;
@@ -12,8 +12,13 @@ class CocktailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: () {
-        _showCocktailDetailsDialog(context);
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CocktailDetailsPage(cocktailId: cocktail.id),
+          ),
+        );
       },
       child: Card(
         elevation: 0,
@@ -55,15 +60,6 @@ class CocktailCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  void _showCocktailDetailsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CocktailDetailsDialog(cocktail: cocktail);
-      },
     );
   }
 }
