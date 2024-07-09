@@ -7,21 +7,18 @@ import '../styles/texts.dart';
 import '../services/cocktail_service.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  const SearchScreen({Key? key}) : super(key: key);
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
-
 class _SearchScreenState extends State<SearchScreen> {
   late ScrollController _scrollController;
   late List<Cocktail> _cocktails;
   late bool _isLoading;
   late String _currentLetter;
   final CocktailService _cocktailService = CocktailService();
-
   bool _isManualSearch = false; // Aggiunto booleano per indicare ricerca manuale
-
   @override
   void initState() {
     super.initState();
@@ -31,17 +28,13 @@ class _SearchScreenState extends State<SearchScreen> {
     _currentLetter = 'a';
     _fetchCocktails(_currentLetter);
   }
-
   Future<void> _fetchCocktails(String identifier) async {
     if (_isLoading) return;
-
     setState(() {
       _isLoading = true;
     });
-
     try {
       List<Cocktail> fetchedCocktails = await _cocktailService.getCocktailsByFirstLetter(identifier);
-
       setState(() {
         _cocktails.addAll(fetchedCocktails);
         _currentLetter = _cocktailService.getNextIdentifier(identifier);
@@ -54,16 +47,13 @@ class _SearchScreenState extends State<SearchScreen> {
       });
     }
   }
-
   Future<void> _searchCocktails(String query, String filter, bool isManualSearch) async {
     if (_isLoading) return;
-
     setState(() {
       _isLoading = true;
       _cocktails.clear();
       _isManualSearch = isManualSearch; // Imposta il flag _isManualSearch
     });
-
     try {
       List<Cocktail> fetchedCocktails = [];
       if (filter == 'Nome') {
@@ -71,7 +61,6 @@ class _SearchScreenState extends State<SearchScreen> {
       } else if (filter == 'Ingrediente') {
         fetchedCocktails = await _cocktailService.searchCocktailsByIngredient(query);
       }
-
       setState(() {
         _cocktails = fetchedCocktails;
         _isLoading = false;
@@ -83,22 +72,18 @@ class _SearchScreenState extends State<SearchScreen> {
       });
     }
   }
-
   void _scrollListener() {
     if (_isManualSearch) return; // Se la ricerca è manuale, non eseguire lo scrollListener
-
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       _fetchCocktails(_currentLetter);
     }
   }
-
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,23 +98,23 @@ class _SearchScreenState extends State<SearchScreen> {
           children: <Widget>[
             CustomSearchBar(onSearch: _searchCocktails),
             const SizedBox(height: 10.0),
-            if (_cocktails.isEmpty && !_isLoading)
-              const Center(
+            Expanded(
+              child: _cocktails.isEmpty && !_isLoading
+                  ? const Center(
                 child: Text('Nessun cocktail trovato'),
               )
-            else
-              CocktailGrid(
+                  : CocktailGrid(
                 scrollController: _scrollController,
                 cocktails: _cocktails,
                 isLoading: _isLoading,
               ),
+            ),
             if (_isLoading)
               const Center(
                 child: CircularProgressIndicator(),
               ),
           ],
         ),
-
       ),
     );
   }
