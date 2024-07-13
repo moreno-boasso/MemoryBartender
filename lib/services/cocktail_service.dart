@@ -20,7 +20,6 @@ class CocktailService {
           name: json['strDrink'],
           imageUrl: json['strDrinkThumb'],
           isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-          glassType: json['strGlass'] ?? '',
           ingredients: _getIngredients(json),
           instructions: '', // Nessuna istruzione specifica per la ricerca per lettera
         )).toList();
@@ -46,7 +45,6 @@ class CocktailService {
           name: json['strDrink'],
           imageUrl: json['strDrinkThumb'],
           isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-          glassType: json['strGlass'] ?? '',
           ingredients: _getIngredients(json),
           instructions: '', // Nessuna istruzione specifica per la ricerca per nome
         )).toList();
@@ -72,7 +70,6 @@ class CocktailService {
           name: json['strDrink'],
           imageUrl: json['strDrinkThumb'],
           isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-          glassType: json['strGlass'] ?? '',
           ingredients: [], // filter.php non fornisce ingredienti
           instructions: '', // Nessuna istruzione specifica per la ricerca per ingrediente
         )).toList();
@@ -99,7 +96,6 @@ class CocktailService {
           name: drink['strDrink'],
           imageUrl: drink['strDrinkThumb'],
           isAlcoholic: drink['strAlcoholic'] == 'Alcoholic',
-          glassType: drink['strGlass'],
           ingredients: _getIngredients(drink),
           instructions: drink['strInstructions'] ?? 'Nessuna istruzione specifica..',
         );
