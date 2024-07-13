@@ -1,11 +1,44 @@
 import 'package:flutter/material.dart';
-
+import 'package:translator/translator.dart';
+import '../../styles/colors.dart';
 import '../../styles/texts.dart';
 
-class CocktailInstructions extends StatelessWidget {
+class CocktailInstructions extends StatefulWidget {
   final String instructions;
 
   const CocktailInstructions({super.key, required this.instructions});
+
+  @override
+  _CocktailInstructionsState createState() => _CocktailInstructionsState();
+}
+
+class _CocktailInstructionsState extends State<CocktailInstructions> {
+  String translatedText = '';
+  bool isTranslated = false;
+  bool isLoading = false;
+
+  Future<void> translateInstructions() async {
+    setState(() {
+      isLoading = true;
+    });
+    final translator = GoogleTranslator();
+    var translation = await translator.translate(widget.instructions, to: 'it');
+    setState(() {
+      translatedText = translation.text;
+      isTranslated = true;
+      isLoading = false;
+    });
+  }
+
+  void toggleTranslation() {
+    if (isTranslated) {
+      setState(() {
+        isTranslated = false;
+      });
+    } else {
+      translateInstructions();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +47,33 @@ class CocktailInstructions extends StatelessWidget {
       children: [
         const Text(
           'Istruzioni:',
-          style: MemoText.subtitleDetail
+          style: MemoText.subtitleDetail,
         ),
         const SizedBox(height: 7),
         Text(
-          instructions,
-            style: MemoText.instructionsText
+          isTranslated ? translatedText : widget.instructions,
+          style: MemoText.instructionsText,
+        ),
+        const SizedBox(height: 20),
+        Row(
+          children: [
+            const Spacer(),
+            Column(
+              children: [
+                TextButton(
+                  onPressed: isLoading ? null : toggleTranslation,
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey,
+                  ),
+                  child: isLoading
+                      ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
+                      : Text(isTranslated ? 'Mostra originale' : 'Traduci',style: TextStyle(fontSize: 14),),
+                ),
+              ],
+            ),
+          ],
         ),
       ],
     );
