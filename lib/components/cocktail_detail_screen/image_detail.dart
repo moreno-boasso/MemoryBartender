@@ -27,7 +27,7 @@ class CocktailImageHeader extends StatelessWidget {
             ],
             image: DecorationImage(
               image: NetworkImage(cocktail.imageUrl),
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
         ),
@@ -36,11 +36,11 @@ class CocktailImageHeader extends StatelessWidget {
           left: 12,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.black54,
+              color: MemoColors.black.withOpacity(0.5),
               borderRadius: BorderRadius.circular(30),
             ),
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: MemoColors.white),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
