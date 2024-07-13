@@ -97,7 +97,7 @@ class CocktailService {
           imageUrl: drink['strDrinkThumb'],
           isAlcoholic: drink['strAlcoholic'] == 'Alcoholic',
           ingredients: _getIngredients(drink),
-          instructions: drink['strInstructions'] ?? 'Nessuna istruzione specifica..',
+          instructions: drink['strInstructions'] ?? 'Nessuna istruzione specificata..',
         );
       } else {
         throw Exception('Failed to load cocktail details');

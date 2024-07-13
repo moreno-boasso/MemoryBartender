@@ -54,7 +54,7 @@ class _CocktailInstructionsState extends State<CocktailInstructions> {
           isTranslated ? translatedText : widget.instructions,
           style: MemoText.instructionsText,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 5),
         Row(
           children: [
             const Spacer(),
@@ -63,13 +63,13 @@ class _CocktailInstructionsState extends State<CocktailInstructions> {
                 TextButton(
                   onPressed: isLoading ? null : toggleTranslation,
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.grey,
+                    foregroundColor: MemoColors.black.withOpacity(0.4),
                   ),
                   child: isLoading
                       ? const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(MemoColors.brownie),
                   )
-                      : Text(isTranslated ? 'Mostra originale' : 'Traduci',style: TextStyle(fontSize: 14),),
+                      : Text(isTranslated ? 'Mostra originale' : 'Traduci',style: const TextStyle(fontSize: 14),),
                 ),
               ],
             ),
