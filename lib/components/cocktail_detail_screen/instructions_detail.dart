@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 
+import '../../styles/texts.dart';
+
 class CocktailInstructions extends StatelessWidget {
   final String instructions;
 
-  const CocktailInstructions({Key? key, required this.instructions}) : super(key: key);
+  const CocktailInstructions({super.key, required this.instructions});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Preparazione',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+        const Text(
+          'Istruzioni:',
+          style: MemoText.subtitleDetail
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 7),
         Text(
           instructions,
-          style: const TextStyle(fontSize: 16),
+            style: MemoText.instructionsText
         ),
       ],
     );

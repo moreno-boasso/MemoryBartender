@@ -49,4 +49,9 @@ class MemoText {
   static const TextStyle ingredientName = TextStyle(
     fontSize: 18,
   );
+
+  static  TextStyle instructionsText = TextStyle(
+    fontSize: 16,
+        color: MemoColors.black.withOpacity(0.8),
+  );
 }

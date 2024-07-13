@@ -10,7 +10,7 @@ import '../services/cocktail_service.dart';
 class CocktailDetailsPage extends StatefulWidget {
   final String cocktailId;
 
-  const CocktailDetailsPage({Key? key, required this.cocktailId}) : super(key: key);
+  const CocktailDetailsPage({super.key, required this.cocktailId});
 
   @override
   _CocktailDetailsPageState createState() => _CocktailDetailsPageState();
@@ -37,12 +37,10 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Immagine del cocktail
                 CocktailImageHeader(cocktail: cocktail, context: context),
 
                 const SizedBox(height: 30),
 
-                // Padding generale per il contenuto
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
@@ -56,14 +54,14 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
                       // Ingredienti
                       IngredientsDetail(ingredients: cocktail.ingredients),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 40),
 
                       // Preparazione
                       CocktailInstructions(instructions: cocktail.instructions),
 
                       const SizedBox(height: 30),
 
-                      ConversionSection(cocktail: cocktail), // Utilizza il nuovo componente
+                      ConversionSection(cocktail: cocktail),
                       const SizedBox(height: 10),
 
                     ],
