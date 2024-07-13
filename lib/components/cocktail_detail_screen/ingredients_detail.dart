@@ -1,4 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+
+import '../../styles/texts.dart';
 
 class IngredientsDetail extends StatelessWidget {
   final List<Map<String, String>> ingredients;
@@ -20,10 +23,13 @@ class IngredientsDetail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _buildMeasureText(ingredient['measure']!),
-                  Text(
+                  AutoSizeText(
                     ingredient['ingredient']!,
-                    style: const TextStyle(fontSize: 16),
+                    style: MemoText.ingredientName,
                     textAlign: TextAlign.center,
+                    maxLines: 2,
+                    maxFontSize: 20,
+                    minFontSize: 14,
                   ),
                 ],
               ),
@@ -43,44 +49,40 @@ class IngredientsDetail extends StatelessWidget {
       // Determina la forma corretta di "cucchiaino" in base al numero
       String teaspoonText = (numTsp == 1) ? 'cucchiaino' : 'cucchiaini';
 
-      return Text(
+      return AutoSizeText(
+        minFontSize: 14,
+        maxLines: 2,
         measure.replaceAll('tsp', teaspoonText),
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.grey,
-        ),
+        style: MemoText.ingredientsMeasure,
         textAlign: TextAlign.center,
       );
     } else if (measure.toLowerCase().contains('dash')) {
       // Sostituisci 'dash' con 'Riempi con'
-      return const Text(
+      return const AutoSizeText(
         'Riempi con',
-        style: TextStyle(
-          fontSize: 16,
-          color: Colors.grey,
-        ),
+        minFontSize: 14,
+        maxLines: 2,
+        style: MemoText.ingredientsMeasure,
         textAlign: TextAlign.center,
       );
     } else if (measure.toLowerCase().contains('part')) {
       // Verifica se contiene 'part'
       if (measure.toLowerCase().contains('parts')) {
         // Se contiene 'parts', sostituisci con 'parti'
-        return Text(
+        return AutoSizeText(
+          minFontSize: 14,
+          maxLines: 2,
           measure.replaceAll('parts', 'parti'),
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-          ),
+          style: MemoText.ingredientsMeasure,
           textAlign: TextAlign.center,
         );
       } else {
         // Altrimenti, sostituisci con 'parte'
-        return Text(
+        return AutoSizeText(
+          minFontSize: 14,
+          maxLines: 2,
           measure.replaceAll('part', 'parte'),
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-          ),
+          style: MemoText.ingredientsMeasure,
           textAlign: TextAlign.center,
         );
       }
@@ -91,22 +93,20 @@ class IngredientsDetail extends StatelessWidget {
       // Determina la forma corretta di "cucchiaio da tavola" in base al numero
       String tablespoonText = (numTbsp == 1) ? 'cucchiaio' : 'cucchiai';
 
-      return Text(
+      return AutoSizeText(
+        minFontSize: 14,
+        maxLines: 2,
         measure.replaceAll('tblsp', tablespoonText),
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.grey,
-        ),
+        style: MemoText.ingredientsMeasure,
         textAlign: TextAlign.center,
       );
     } else {
       // Se non contiene 'tsp', 'dash', 'part' o 'tbsp', mostra la misura come è
-      return Text(
+      return AutoSizeText(
+        minFontSize: 14,
+        maxLines: 2,
         measure,
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.grey,
-        ),
+        style: MemoText.ingredientsMeasure,
         textAlign: TextAlign.center,
       );
     }

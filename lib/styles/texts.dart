@@ -42,4 +42,11 @@ class MemoText {
   static const TextStyle conversionNumbers = TextStyle(
     fontSize: 16,
   );
+  static const TextStyle ingredientsMeasure = TextStyle(
+    fontSize: 18,
+    color: MemoColors.brownie,
+  );
+  static const TextStyle ingredientName = TextStyle(
+    fontSize: 18,
+  );
 }
