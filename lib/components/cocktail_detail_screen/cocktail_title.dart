@@ -16,7 +16,7 @@ class CocktailTitle extends StatelessWidget {
           width: 5,
           height: 70,
           color: Colors.black,
-          margin: const EdgeInsets.only(left: 16, right: 8),
+          margin: const EdgeInsets.only(right: 8),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

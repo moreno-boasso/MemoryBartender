@@ -9,7 +9,6 @@ import '../services/cocktail_service.dart';
 enum ConversionUnit {
   Ounce,
   Shot,
-  Dash,
 }
 
 class CocktailDetailsPage extends StatefulWidget {
@@ -45,22 +44,30 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Immagine del cocktail
                 CocktailImageHeader(cocktail: cocktail, context: context),
+
                 const SizedBox(height: 30),
+
+                // Padding generale per il contenuto
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Titolo del cocktail
                       CocktailTitle(cocktail: cocktail),
+
                       const SizedBox(height: 30),
 
                       // Ingredienti
                       IngredientsDetail(ingredients: cocktail.ingredients),
+
                       const SizedBox(height: 30),
 
                       // Preparazione
                       CocktailInstructions(instructions: cocktail.instructions),
+
                       const SizedBox(height: 30),
 
                       // Container per la conversione Unità con ombra
@@ -89,25 +96,29 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+
                             SizedBox(height: 10),
+
+                            // Row per i pulsanti di conversione
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 _buildConversionButton(ConversionUnit.Ounce, Icons.local_drink, 'Oz'),
-                                _buildConversionButton(ConversionUnit.Shot, Icons.shutter_speed, 'Shots'),
-                                _buildConversionButton(ConversionUnit.Dash, Icons.flash_on, 'Dash'),
+                                _buildConversionButton(ConversionUnit.Shot, Icons.water_drop, 'Shots'),
                               ],
                             ),
-                            SizedBox(height: 10),
 
                             SizedBox(height: 10),
+
+                            // Righe di conversione
                             ..._buildConversionRows(cocktail, _selectedUnit),
+
                             Center(
                               child: TextButton(
                                 onPressed: () {
                                   _loadMoreConversions(cocktail);
                                 },
-                                child: Icon(Icons.keyboard_arrow_down),
+                                child: const Icon(Icons.keyboard_arrow_down),
                               ),
                             ),
                           ],
@@ -131,21 +142,22 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
       double value = i.toDouble();
       String label = _getUnitLabel(unit);
 
-      double convertedValue = (unit == ConversionUnit.Dash) ? value : _convertToCl(value, unit);
+      double convertedValue = _convertToCl(value, unit);
 
-      String valueText = '${value.toStringAsFixed(0)} ${label}';
-      String convertedText = (unit == ConversionUnit.Dash) ? '${value.toStringAsFixed(0)} Pizzico' : '≈ ${convertedValue.toStringAsFixed(0)} cl';
+      String valueText = '${value.toStringAsFixed(0)} $label';
+      String convertedText = '≈ ${convertedValue.toStringAsFixed(0)} cl';
 
       rows.add(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 valueText,
                 style: TextStyle(fontSize: 16.0),
               ),
+              SizedBox(width: 5,),
               Text(
                 convertedText,
                 style: TextStyle(fontSize: 16.0),
@@ -163,12 +175,10 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
   double _convertToCl(double value, ConversionUnit unit) {
     switch (unit) {
       case ConversionUnit.Ounce:
-        return value * 2.95735;
+        return value *  2.95735;
       case ConversionUnit.Shot:
       // Implementa la conversione da shot a cl
-        return value * 3; // Esempio di conversione
-      case ConversionUnit.Dash:
-        return value;
+        return value * 5; // Esempio di conversione
       default:
         return 0.0;
     }
@@ -181,8 +191,6 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
         return 'oz';
       case ConversionUnit.Shot:
         return 'shots';
-      case ConversionUnit.Dash:
-        return 'dash';
       default:
         return '';
     }
