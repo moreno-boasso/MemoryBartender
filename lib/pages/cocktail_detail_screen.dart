@@ -1,148 +1,118 @@
 import 'package:flutter/material.dart';
+import '../components/cocktail_detail_screen/image_detail.dart';
+import '../components/cocktail_detail_screen/cocktail_title.dart';
+import '../components/cocktail_detail_screen/instructions_detail.dart';
+import '../components/cocktail_detail_screen/ingredients_detail.dart';
 import '../models/cocktail.dart';
 import '../services/cocktail_service.dart';
 
-class CocktailDetailsPage extends StatelessWidget {
+enum ConversionUnit {
+  Ounce,
+  Shot,
+  Dash,
+}
+
+class CocktailDetailsPage extends StatefulWidget {
   final String cocktailId;
 
-  CocktailDetailsPage({required this.cocktailId});
+  const CocktailDetailsPage({Key? key, required this.cocktailId}) : super(key: key);
+
+  @override
+  _CocktailDetailsPageState createState() => _CocktailDetailsPageState();
+}
+
+class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
+  List<int> conversionsToShow = [1, 2, 3]; // Inizialmente mostrerà le prime 3 conversioni
+  ConversionUnit _selectedUnit = ConversionUnit.Ounce; // Inizialmente selezionato Ounce
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Cocktail>(
-      future: CocktailService().getCocktailDetails(cocktailId),
+      future: CocktailService().getCocktailDetails(widget.cocktailId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData) {
-          return Center(child: Text('No data'));
+          return const Center(child: Text('No data'));
         }
 
         final cocktail = snapshot.data!;
 
         return Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            backgroundColor: Colors.white,
-            elevation: 0,
-            iconTheme: IconThemeData(color: Colors.black),
-          ),
           body: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Immagine del drink
-                Container(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height / 2,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(30),
-                    ),
-                    image: DecorationImage(
-                      image: NetworkImage(cocktail.imageUrl),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                // Titolo e Alcolico/Analcolico
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 5,
-                      height: 50,
-                      color: Colors.black,
-                      margin: EdgeInsets.only(left: 16, right: 8),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          cocktail.name,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          cocktail.isAlcoholic ? 'Alcolico' : 'Analcolico',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                // Ingredienti
+                CocktailImageHeader(cocktail: cocktail, context: context),
+                const SizedBox(height: 30),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Ingredienti',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      ...cocktail.ingredients.map((ingredient) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              ingredient['measure']!,
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Text(
-                              ingredient['ingredient']!,
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                      SizedBox(height: 20),
+                      CocktailTitle(cocktail: cocktail),
+                      const SizedBox(height: 30),
+
+                      // Ingredienti
+                      IngredientsDetail(ingredients: cocktail.ingredients),
+                      const SizedBox(height: 30),
 
                       // Preparazione
-                      Text(
-                        'Preparazione',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        cocktail.instructions,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      SizedBox(height: 20),
+                      CocktailInstructions(instructions: cocktail.instructions),
+                      const SizedBox(height: 30),
 
-                      Text(
-                        'Tipo di bicchiere',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      // Container per la conversione Unità con ombra
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 20.0),
+                        padding: EdgeInsets.all(20.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Conversioni:', // Titolo delle conversioni
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                _buildConversionButton(ConversionUnit.Ounce, Icons.local_drink, 'Oz'),
+                                _buildConversionButton(ConversionUnit.Shot, Icons.shutter_speed, 'Shots'),
+                                _buildConversionButton(ConversionUnit.Dash, Icons.flash_on, 'Dash'),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+
+                            SizedBox(height: 10),
+                            ..._buildConversionRows(cocktail, _selectedUnit),
+                            Center(
+                              child: TextButton(
+                                onPressed: () {
+                                  _loadMoreConversions(cocktail);
+                                },
+                                child: Icon(Icons.keyboard_arrow_down),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 10),
-// Tipo di bicchiere
-                      Text(
-                        cocktail.glassType,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -152,5 +122,98 @@ class CocktailDetailsPage extends StatelessWidget {
         );
       },
     );
+  }
+
+  List<Widget> _buildConversionRows(Cocktail cocktail, ConversionUnit unit) {
+    List<Widget> rows = [];
+
+    for (int i in conversionsToShow) {
+      double value = i.toDouble();
+      String label = _getUnitLabel(unit);
+
+      double convertedValue = (unit == ConversionUnit.Dash) ? value : _convertToCl(value, unit);
+
+      String valueText = '${value.toStringAsFixed(0)} ${label}';
+      String convertedText = (unit == ConversionUnit.Dash) ? '${value.toStringAsFixed(0)} Pizzico' : '≈ ${convertedValue.toStringAsFixed(0)} cl';
+
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                valueText,
+                style: TextStyle(fontSize: 16.0),
+              ),
+              Text(
+                convertedText,
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return rows;
+  }
+
+
+  double _convertToCl(double value, ConversionUnit unit) {
+    switch (unit) {
+      case ConversionUnit.Ounce:
+        return value * 2.95735;
+      case ConversionUnit.Shot:
+      // Implementa la conversione da shot a cl
+        return value * 3; // Esempio di conversione
+      case ConversionUnit.Dash:
+        return value;
+      default:
+        return 0.0;
+    }
+  }
+
+
+  String _getUnitLabel(ConversionUnit unit) {
+    switch (unit) {
+      case ConversionUnit.Ounce:
+        return 'oz';
+      case ConversionUnit.Shot:
+        return 'shots';
+      case ConversionUnit.Dash:
+        return 'dash';
+      default:
+        return '';
+    }
+  }
+
+  Widget _buildConversionButton(ConversionUnit unit, IconData icon, String label) {
+    bool isSelected = (_selectedUnit == unit);
+
+    return Column(
+      children: [
+        IconButton(
+          icon: Icon(icon),
+          onPressed: () {
+            setState(() {
+              _selectedUnit = unit;
+            });
+          },
+          tooltip: 'Converti in $label',
+          color: isSelected ? Colors.blue : Colors.black, // Colora l'icona se selezionata
+        ),
+        Text(
+          label, // Testo della descrizione
+          style: TextStyle(fontSize: 12.0), // Puoi regolare il font size secondo necessità
+        ),
+      ],
+    );
+  }
+
+  void _loadMoreConversions(Cocktail cocktail) {
+    setState(() {
+      conversionsToShow.addAll([conversionsToShow.length + 1, conversionsToShow.length + 2, conversionsToShow.length + 3]);
+    });
   }
 }
