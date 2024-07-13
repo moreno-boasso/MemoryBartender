@@ -33,4 +33,13 @@ class MemoText {
     fontSize: 20,
     color: MemoColors.brownie,
   );
+
+  static const TextStyle subtitleDetail = TextStyle(
+    fontSize: 20.0,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const TextStyle conversionNumbers = TextStyle(
+    fontSize: 16,
+  );
 }

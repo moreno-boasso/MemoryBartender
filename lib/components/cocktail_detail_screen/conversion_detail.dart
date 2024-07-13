@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/cocktail.dart';
+import '../../styles/colors.dart';
+import '../../styles/texts.dart';
 
 enum ConversionUnit {
   Ounce,
@@ -9,47 +11,43 @@ enum ConversionUnit {
 class ConversionSection extends StatefulWidget {
   final Cocktail cocktail;
 
-  const ConversionSection({Key? key, required this.cocktail}) : super(key: key);
+  const ConversionSection({super.key, required this.cocktail});
 
   @override
   _ConversionSectionState createState() => _ConversionSectionState();
 }
 
 class _ConversionSectionState extends State<ConversionSection> {
-  List<int> conversionsToShow = [1, 2, 3]; // Inizialmente mostrerà le prime 3 conversioni
-  ConversionUnit _selectedUnit = ConversionUnit.Ounce; // Inizialmente selezionato Ounce
+  List<int> conversionsToShow = [1, 2, 3];
+  ConversionUnit _selectedUnit = ConversionUnit.Ounce;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 20.0),
-      padding: EdgeInsets.all(20.0),
+      margin: const EdgeInsets.symmetric(vertical: 20.0),
+      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: MemoColors.white,
         borderRadius: BorderRadius.circular(15.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: MemoColors.black.withOpacity(0.3),
             spreadRadius: 2,
-            blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
+            blurRadius: 6,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Conversioni:', // Titolo delle conversioni
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
+          const Text(
+            'Conversioni:',
+            style: MemoText.subtitleDetail,
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
-          // Row per i pulsanti di conversione
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -58,7 +56,7 @@ class _ConversionSectionState extends State<ConversionSection> {
             ],
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
           // Righe di conversione
           ..._buildConversionRows(widget.cocktail, _selectedUnit),
@@ -68,7 +66,7 @@ class _ConversionSectionState extends State<ConversionSection> {
               onPressed: () {
                 _loadMoreConversions(widget.cocktail);
               },
-              child: const Icon(Icons.keyboard_arrow_down),
+              child: const Icon(Icons.keyboard_arrow_down,color: MemoColors.black,),
             ),
           ),
         ],
@@ -96,12 +94,12 @@ class _ConversionSectionState extends State<ConversionSection> {
             children: [
               Text(
                 valueText,
-                style: TextStyle(fontSize: 16.0),
+                style: MemoText.conversionNumbers
               ),
-              SizedBox(width: 5,),
+              const SizedBox(width: 5,),
               Text(
                 convertedText,
-                style: TextStyle(fontSize: 16.0),
+                  style: MemoText.conversionNumbers
               ),
             ],
           ),
@@ -117,8 +115,7 @@ class _ConversionSectionState extends State<ConversionSection> {
       case ConversionUnit.Ounce:
         return value *  2.95735;
       case ConversionUnit.Shot:
-      // Implementa la conversione da shot a cl
-        return value * 5; // Esempio di conversione
+        return value * 5;
       default:
         return 0.0;
     }
@@ -141,18 +138,17 @@ class _ConversionSectionState extends State<ConversionSection> {
     return Column(
       children: [
         IconButton(
-          icon: Icon(icon),
+          icon: Icon(icon,color: isSelected ?   MemoColors.black : MemoColors.black.withOpacity(0.4)),
           onPressed: () {
             setState(() {
               _selectedUnit = unit;
             });
           },
           tooltip: 'Converti in $label',
-          color: isSelected ? Colors.blue : Colors.black, // Colora l'icona se selezionata
         ),
         Text(
-          label, // Testo della descrizione
-          style: TextStyle(fontSize: 12.0), // Puoi regolare il font size secondo necessità
+          label,
+          style: TextStyle(fontSize: 14.0,color: isSelected ? MemoColors.black : MemoColors.black.withOpacity(0.4)),
         ),
       ],
     );

@@ -64,6 +64,8 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
                       const SizedBox(height: 30),
 
                       ConversionSection(cocktail: cocktail), // Utilizza il nuovo componente
+                      const SizedBox(height: 10),
+
                     ],
                   ),
                 ),
