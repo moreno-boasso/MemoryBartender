@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import '../../models/cocktail.dart';
+import '../../styles/colors.dart';
+import '../../styles/texts.dart';
 
 class CocktailTitle extends StatelessWidget {
   final Cocktail cocktail;
@@ -15,7 +17,7 @@ class CocktailTitle extends StatelessWidget {
         Container(
           width: 5,
           height: 70,
-          color: Colors.black,
+          color: MemoColors.black,
           margin: const EdgeInsets.only(right: 8),
         ),
         Column(
@@ -31,18 +33,12 @@ class CocktailTitle extends StatelessWidget {
                 minFontSize: 20,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: MemoText.titleDetail,
               ),
             ),
             Text(
               cocktail.isAlcoholic ? 'Alcolico' : 'Analcolico',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.grey[700],
-              ),
+              style: MemoText.alcoolDetail
             ),
           ],
         ),

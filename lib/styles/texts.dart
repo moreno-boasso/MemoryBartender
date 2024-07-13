@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'colors.dart';
 
+// esempio:
+
+//    static const TextStyle name = TextStyle(
+//
+//      );
+
 class MemoText {
   static const TextStyle titleScreen = TextStyle(
     fontSize: 28.0,
@@ -18,5 +24,13 @@ class MemoText {
       fontSize: 14,
       fontWeight: FontWeight.w100,
       color: MemoColors.black
+  );
+  static const TextStyle titleDetail = TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.bold,
+  );
+  static const TextStyle alcoolDetail = TextStyle(
+    fontSize: 20,
+    color: MemoColors.brownie,
   );
 }

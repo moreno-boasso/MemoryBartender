@@ -49,17 +49,17 @@ class IngredientsDetail extends StatelessWidget {
           fontSize: 16,
           color: Colors.grey,
         ),
-        textAlign: TextAlign.start,
+        textAlign: TextAlign.center,
       );
     } else if (measure.toLowerCase().contains('dash')) {
       // Sostituisci 'dash' con 'Riempi con'
-      return Text(
+      return const Text(
         'Riempi con',
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
           color: Colors.grey,
         ),
-        textAlign: TextAlign.start,
+        textAlign: TextAlign.center,
       );
     } else if (measure.toLowerCase().contains('part')) {
       // Verifica se contiene 'part'
@@ -71,7 +71,7 @@ class IngredientsDetail extends StatelessWidget {
             fontSize: 16,
             color: Colors.grey,
           ),
-          textAlign: TextAlign.start,
+          textAlign: TextAlign.center,
         );
       } else {
         // Altrimenti, sostituisci con 'parte'
@@ -81,7 +81,7 @@ class IngredientsDetail extends StatelessWidget {
             fontSize: 16,
             color: Colors.grey,
           ),
-          textAlign: TextAlign.start,
+          textAlign: TextAlign.center,
         );
       }
     } else if (measure.toLowerCase().contains('tblsp')) {
@@ -97,7 +97,7 @@ class IngredientsDetail extends StatelessWidget {
           fontSize: 16,
           color: Colors.grey,
         ),
-        textAlign: TextAlign.start,
+        textAlign: TextAlign.center,
       );
     } else {
       // Se non contiene 'tsp', 'dash', 'part' o 'tbsp', mostra la misura come è
@@ -107,7 +107,7 @@ class IngredientsDetail extends StatelessWidget {
           fontSize: 16,
           color: Colors.grey,
         ),
-        textAlign: TextAlign.start,
+        textAlign: TextAlign.center,
       );
     }
   }
