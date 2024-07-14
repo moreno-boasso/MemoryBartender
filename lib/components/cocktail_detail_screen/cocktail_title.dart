@@ -16,8 +16,8 @@ class CocktailTitle extends StatelessWidget {
       children: [
         Container(
           width: 5,
-          height: 70,
-          color: MemoColors.black,
+          height: 63,
+          color: MemoColors.brownie,
           margin: const EdgeInsets.only(right: 8),
         ),
         Column(
@@ -29,7 +29,6 @@ class CocktailTitle extends StatelessWidget {
               ),
               child: AutoSizeText(
                 cocktail.name,
-                maxFontSize: 30,
                 minFontSize: 20,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,

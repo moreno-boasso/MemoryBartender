@@ -59,7 +59,7 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
                       // Preparazione
                       CocktailInstructions(instructions: cocktail.instructions),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 10),
 
                       ConversionSection(cocktail: cocktail),
                       const SizedBox(height: 10),

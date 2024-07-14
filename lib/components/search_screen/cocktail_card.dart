@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/cocktail.dart';
 import '../../pages/cocktail_detail_screen.dart';
 import '../../styles/texts.dart';
+import 'card_preview.dart';
 
 class CocktailCard extends StatelessWidget {
   final Cocktail cocktail;
@@ -18,6 +19,14 @@ class CocktailCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => CocktailDetailsPage(cocktailId: cocktail.id),
           ),
+        );
+      },
+      onLongPress: () { // Aggiungi questa funzione per gestire il long press
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CocktailDetailsDialog(cocktail: cocktail);
+          },
         );
       },
       child: Card(

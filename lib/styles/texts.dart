@@ -26,11 +26,11 @@ class MemoText {
       color: MemoColors.black
   );
   static const TextStyle titleDetail = TextStyle(
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: FontWeight.bold,
   );
   static const TextStyle alcoolDetail = TextStyle(
-    fontSize: 20,
+    fontSize: 19,
     color: MemoColors.brownie,
   );
 
@@ -43,11 +43,11 @@ class MemoText {
     fontSize: 16,
   );
   static const TextStyle ingredientsMeasure = TextStyle(
-    fontSize: 18,
+    fontSize: 16,
     color: MemoColors.brownie,
   );
   static const TextStyle ingredientName = TextStyle(
-    fontSize: 18,
+    fontSize: 16,
   );
 
   static  TextStyle instructionsText = TextStyle(

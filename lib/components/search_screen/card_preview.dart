@@ -36,6 +36,7 @@ class CocktailDetailsDialog extends StatelessWidget {
                   cocktail.name,
                   textAlign: TextAlign.center,
                   style: MemoText.titleScreen,
+                  maxFontSize: 20,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

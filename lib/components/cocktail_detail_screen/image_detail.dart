@@ -14,7 +14,7 @@ class CocktailImageHeader extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height / 2.2,
+          height: MediaQuery.of(context).size.height / 2,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(50)),
             boxShadow: [
@@ -27,17 +27,17 @@ class CocktailImageHeader extends StatelessWidget {
             ],
             image: DecorationImage(
               image: NetworkImage(cocktail.imageUrl),
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
           ),
         ),
         Positioned(
-          top: 20,
-          left: 12,
+          top: 25,
+          left: 15,
           child: Container(
             decoration: BoxDecoration(
               color: MemoColors.black.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(50),
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: MemoColors.white),
