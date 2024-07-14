@@ -111,7 +111,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             if (_isLoading)
               const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(color: MemoColors.brownie,),
               ),
           ],
         ),

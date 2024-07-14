@@ -17,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   final PageController _pageController = PageController();
 
   static final List<Widget> _widgetOptions = <Widget>[
-    SearchScreen(),
+    const SearchScreen(),
     CreateScreen(),
     FavoritesScreen(),
   ];
