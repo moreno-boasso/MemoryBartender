@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'main_screen.dart';
+import 'bottombar_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

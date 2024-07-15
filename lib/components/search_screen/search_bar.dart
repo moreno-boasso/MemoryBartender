@@ -38,8 +38,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   void _onFilterChanged(String? newValue) {
     setState(() {
       _selectedFilter = newValue!;
-      _controller.clear(); // Questa riga cancella il testo nel TextField
+      _controller.clear();
     });
+    widget.onSearch('', _selectedFilter, false);
   }
 
 
@@ -61,15 +62,17 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               child: TextField(
                 controller: _controller,
                 decoration: InputDecoration(
-                  hintText: hintText, // Utilizza il valore dinamico di hintText
+                  hintText: hintText,
                   hintStyle: TextStyle(color: MemoColors.brownie.withOpacity(0.8)),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                 ),
                 style: const TextStyle(fontSize: 16.0),
-                onSubmitted: (value) {
-                  widget.onSearch(value, _selectedFilter, true); // true indica ricerca manuale
+                onChanged: (value) {
+                  String trimmedValue = value.trim(); // Applica trim al valore inserito
+                  widget.onSearch(trimmedValue, _selectedFilter, true); // Passa il valore trimmato alla funzione onSearch
                 },
+
               ),
             ),
             DropdownButtonHideUnderline(
@@ -81,7 +84,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                     child: Text(value),
                   );
                 }).toList(),
-                onChanged: _onFilterChanged, // Chiamata al metodo _onFilterChanged
+                onChanged: _onFilterChanged,
               ),
             ),
 

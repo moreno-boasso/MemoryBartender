@@ -48,8 +48,8 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Cerca',
+            icon: Icon(Icons.explore),
+            label: 'Esplora',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.create),
