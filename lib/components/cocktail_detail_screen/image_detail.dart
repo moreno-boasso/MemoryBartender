@@ -6,9 +6,9 @@ class CocktailImageHeader extends StatelessWidget {
   final Cocktail cocktail;
 
   const CocktailImageHeader({
-    Key? key,
+    super.key,
     required this.cocktail,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,24 +29,6 @@ class CocktailImageHeader extends StatelessWidget {
           image: NetworkImage(cocktail.imageUrl),
           fit: BoxFit.cover,
         ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 25,
-            left: 15,
-            child: Container(
-              decoration: BoxDecoration(
-                color: MemoColors.black.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: MemoColors.white),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
