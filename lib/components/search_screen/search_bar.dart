@@ -69,8 +69,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 ),
                 style: const TextStyle(fontSize: 16.0),
                 onChanged: (value) {
-                  String trimmedValue = value.trim(); // Applica trim al valore inserito
-                  widget.onSearch(trimmedValue, _selectedFilter, true); // Passa il valore trimmato alla funzione onSearch
+                  String trimmedValue = value.trim();
+                  widget.onSearch(trimmedValue, _selectedFilter, true);
                 },
 
               ),
@@ -87,7 +87,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 onChanged: _onFilterChanged,
               ),
             ),
-
           ],
         ),
       ),

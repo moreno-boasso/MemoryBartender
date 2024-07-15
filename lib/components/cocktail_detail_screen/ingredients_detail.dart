@@ -1,12 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../../styles/texts.dart';
 
 class IngredientsDetail extends StatelessWidget {
   final List<Map<String, String>> ingredients;
 
   const IngredientsDetail({super.key, required this.ingredients});
+
+  static const _googleUri = 'https://google.com/search';
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +21,24 @@ class IngredientsDetail extends StatelessWidget {
           children: ingredients.map((ingredient) {
             return SizedBox(
               width: (MediaQuery.of(context).size.width - 60) / 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildMeasureText(ingredient['measure']!),
-                  AutoSizeText(
-                    ingredient['ingredient']!,
-                    style: MemoText.ingredientName,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    maxFontSize: 20,
-                    minFontSize: 14,
-                  ),
-                ],
+              child: GestureDetector(
+                onTap: () {
+                  _launchWebSearch(ingredient['ingredient']!);
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildMeasureText(ingredient['measure']!),
+                    AutoSizeText(
+                      '${ingredient['ingredient']}',
+                      style: MemoText.ingredientName,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      maxFontSize: 20,
+                      minFontSize: 14,
+                    ),
+                  ],
+                ),
               ),
             );
           }).toList(),
@@ -110,5 +117,15 @@ class IngredientsDetail extends StatelessWidget {
         textAlign: TextAlign.center,
       );
     }
+  }
+
+  void _launchWebSearch(String ingredientName) async {
+    final uri = Uri.parse('$_googleUri?q=$ingredientName');
+    launch(
+      uri.toString(),
+      forceWebView: true,
+      enableJavaScript: true,
+      enableDomStorage: true
+    );
   }
 }
