@@ -6,6 +6,7 @@ import '../components/cocktail_detail_screen/instructions_detail.dart';
 import '../components/cocktail_detail_screen/ingredients_detail.dart';
 import '../models/cocktail.dart';
 import '../services/cocktail_service.dart';
+import '../styles/colors.dart'; // Assicurati di importare i tuoi colori
 
 class CocktailDetailsPage extends StatefulWidget {
   final String cocktailId;
@@ -17,6 +18,8 @@ class CocktailDetailsPage extends StatefulWidget {
 }
 
 class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
+  bool _isFavorited = false; // Variabile di stato per gestire il colore
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Cocktail>(
@@ -34,37 +37,74 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
 
         return Scaffold(
           body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: [
-                CocktailImageHeader(cocktail: cocktail, context: context),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CocktailImageHeader(cocktail: cocktail),
 
-                const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Titolo del cocktail
-                      CocktailTitle(cocktail: cocktail),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Titolo del cocktail
+                          CocktailTitle(cocktail: cocktail),
 
-                      const SizedBox(height: 30),
+                          const SizedBox(height: 30),
 
-                      // Ingredienti
-                      IngredientsDetail(ingredients: cocktail.ingredients),
+                          // Ingredienti
+                          IngredientsDetail(ingredients: cocktail.ingredients),
 
-                      const SizedBox(height: 40),
+                          const SizedBox(height: 40),
 
-                      // Preparazione
-                      CocktailInstructions(instructions: cocktail.instructions),
+                          // Preparazione
+                          CocktailInstructions(instructions: cocktail.instructions),
 
-                      const SizedBox(height: 10),
+                          const SizedBox(height: 10),
 
-                      ConversionSection(cocktail: cocktail),
-                      const SizedBox(height: 10),
-
-                    ],
+                          ConversionSection(cocktail: cocktail),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Positioned(
+                  top: MediaQuery.of(context).size.height / 2 - 26,
+                  right: 25,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isFavorited = !_isFavorited;
+                      });
+                    },
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _isFavorited ? Colors.red : MemoColors.white,
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            spreadRadius: 2,
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.favorite_border_sharp,
+                          color: _isFavorited ? Colors.white : MemoColors.black,
+                          size: 25,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
