@@ -19,7 +19,7 @@ class CocktailCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CocktailDetailsPage(cocktailId: cocktail.id, onUpdate: () {  },),
+            builder: (context) => CocktailDetailsPage(cocktailId: cocktail.id,),
           ),
         );
       },

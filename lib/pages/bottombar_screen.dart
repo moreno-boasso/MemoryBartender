@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   static final List<Widget> _widgetOptions = <Widget>[
     const SearchScreen(),
     CreateScreen(),
-    FavoritesScreen(),
+    const FavoritesScreen(),
   ];
 
   void _onItemTapped(int index) {

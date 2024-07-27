@@ -9,21 +9,15 @@ import '../models/cocktail.dart';
 import '../services/cocktail_service.dart';
 import '../styles/colors.dart';
 
-class CocktailDetailsPage extends StatefulWidget {
+class CocktailDetailsPage extends StatelessWidget {
   final String cocktailId;
-  final VoidCallback onUpdate; // Aggiungi il callback
 
-  const CocktailDetailsPage({super.key, required this.cocktailId, required this.onUpdate});
+  const CocktailDetailsPage({super.key, required this.cocktailId});
 
-  @override
-  _CocktailDetailsPageState createState() => _CocktailDetailsPageState();
-}
-
-class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Cocktail>(
-      future: CocktailService().getCocktailDetails(widget.cocktailId),
+      future: CocktailService().getCocktailDetails(cocktailId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -53,17 +47,14 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Titolo del cocktail
                           CocktailTitle(cocktail: cocktail),
 
                           const SizedBox(height: 30),
 
-                          // Ingredienti
                           IngredientsDetail(ingredients: cocktail.ingredients),
 
                           const SizedBox(height: 40),
 
-                          // Preparazione
                           CocktailInstructions(instructions: cocktail.instructions),
 
                           const SizedBox(height: 10),
@@ -81,8 +72,7 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
                   left: 10,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pop(context);
-                      widget.onUpdate(); // Chiama il callback quando si torna indietro
+                      Navigator.pop(context, true); // Passa `true` per indicare che ci sono stati cambiamenti
                     },
                     child: Container(
                       padding: const EdgeInsets.all(5),

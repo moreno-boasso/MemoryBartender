@@ -28,22 +28,17 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     setState(() {});
   }
 
-  Future<void> _addToDaProvare() async {
-    await FavoritesService().addToDaProvare(widget.cocktail);
-    await _checkIfFavorite();
-  }
+  Future<void> _updateFavorites(String category) async {
+    // Remove from both categories first
+    await FavoritesService().removeFromDaProvare(widget.cocktail.id);
+    await FavoritesService().removeFromFatto(widget.cocktail.id);
 
-  Future<void> _addToFatto() async {
-    await FavoritesService().addToFatto(widget.cocktail);
-    await _checkIfFavorite();
-  }
-
-  Future<void> _removeFromFavorites() async {
-    if (isInDaProvare) {
-      await FavoritesService().removeFromDaProvare(widget.cocktail.id);
-    } else if (isInFatto) {
-      await FavoritesService().removeFromFatto(widget.cocktail.id);
+    if (category == 'Da Provare') {
+      await FavoritesService().addToDaProvare(widget.cocktail);
+    } else if (category == 'Fatto') {
+      await FavoritesService().addToFatto(widget.cocktail);
     }
+
     await _checkIfFavorite();
   }
 
@@ -66,54 +61,49 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     return Positioned(
       top: MediaQuery.of(context).size.height / 2 - 26,
       right: 25,
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: MemoColors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              spreadRadius: 2,
-              blurRadius: 6,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Center(
-          child: PopupMenuButton<String>(
-            onSelected: (value) async {
-              if (value == 'Da Provare') {
-                await _addToDaProvare();
-              } else if (value == 'Fatto') {
-                await _addToFatto();
-              } else if (value == 'Rimuovi') {
-                await _removeFromFavorites();
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'Da Provare',
-                child: Text('Da Provare'),
-              ),
-              const PopupMenuItem(
-                value: 'Fatto',
-                child: Text('Fatto'),
-              ),
-              if (isInDaProvare || isInFatto)
-                const PopupMenuItem(
-                  value: 'Rimuovi',
-                  child: Text('Rimuovi dai Preferiti'),
+      child: Stack(
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: MemoColors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  spreadRadius: 2,
+                  blurRadius: 6,
+                  offset: Offset(0, 3),
                 ),
-            ],
-            icon: Icon(
-              icon,
-              color: iconColor,
-              size: 25,
+              ],
+            ),
+            child: Center(
+              child: PopupMenuButton<String>(
+                onSelected: (value) async {
+                  if (value != (isInDaProvare ? 'Da Provare' : isInFatto ? 'Fatto' : '')) {
+                    await _updateFavorites(value);
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'Da Provare',
+                    child: Text('Da Provare'),
+                  ),
+                  const PopupMenuItem(
+                    value: 'Fatto',
+                    child: Text('Fatto'),
+                  ),
+                ],
+                icon: Icon(
+                  icon,
+                  color: iconColor,
+                  size: 25,
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

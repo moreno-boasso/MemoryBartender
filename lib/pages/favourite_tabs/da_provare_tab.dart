@@ -1,16 +1,39 @@
 import 'package:flutter/material.dart';
-import '../../components/search_screen/cocktail_card.dart';
 import '../../models/cocktail.dart';
 import '../../services/favorite_service.dart';
-import '../cocktail_detail_screen.dart';
+import '../../components/search_screen/cocktail_card.dart';
 
-class DaProvareTab extends StatelessWidget {
+class DaProvareTab extends StatefulWidget {
   const DaProvareTab({super.key});
+
+  @override
+  _DaProvareTabState createState() => _DaProvareTabState();
+}
+
+class _DaProvareTabState extends State<DaProvareTab> {
+  late Future<List<Cocktail>> _daProvareCocktails;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCocktails();
+  }
+
+  Future<void> _loadCocktails() async {
+    setState(() {
+      _daProvareCocktails = FavoritesService().getDaProvare();
+    });
+  }
+
+  Future<void> _removeCocktail(Cocktail cocktail) async {
+    await FavoritesService().removeFromDaProvare(cocktail.id);
+    _loadCocktails(); // Ricarica la lista
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Cocktail>>(
-      future: FavoritesService().getDaProvare(),
+      future: _daProvareCocktails,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -30,22 +53,18 @@ class DaProvareTab extends StatelessWidget {
           ),
           itemCount: cocktails.length,
           itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CocktailDetailsPage(
-                      cocktailId: cocktails[index].id,
-                      onUpdate: () {
-                        // Callback per ricaricare i dati
-                        (context as Element).markNeedsBuild();
-                      },
-                    ),
+            return Stack(
+              children: [
+                CocktailCard(cocktail: cocktails[index],), // Non cambia
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _removeCocktail(cocktails[index]),
                   ),
-                );
-              },
-              child: CocktailCard(cocktail: cocktails[index]),
+                ),
+              ],
             );
           },
         );
@@ -53,21 +72,44 @@ class DaProvareTab extends StatelessWidget {
     );
   }
 }
-
-class FattoTab extends StatelessWidget {
+class FattoTab extends StatefulWidget {
   const FattoTab({super.key});
+
+  @override
+  _FattoTabState createState() => _FattoTabState();
+}
+
+class _FattoTabState extends State<FattoTab> {
+  late Future<List<Cocktail>> _fattoCocktails;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCocktails();
+  }
+
+  Future<void> _loadCocktails() async {
+    setState(() {
+      _fattoCocktails = FavoritesService().getFatto();
+    });
+  }
+
+  Future<void> _removeCocktail(Cocktail cocktail) async {
+    await FavoritesService().removeFromFatto(cocktail.id);
+    _loadCocktails(); // Ricarica la lista
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Cocktail>>(
-      future: FavoritesService().getFatto(),
+      future: _fattoCocktails,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('Nessun cocktail fatto'));
+          return const Center(child: Text('Nessun cocktail provato'));
         }
 
         final cocktails = snapshot.data!;
@@ -80,22 +122,18 @@ class FattoTab extends StatelessWidget {
           ),
           itemCount: cocktails.length,
           itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CocktailDetailsPage(
-                      cocktailId: cocktails[index].id,
-                      onUpdate: () {
-                        // Callback per ricaricare i dati
-                        (context as Element).markNeedsBuild();
-                      },
-                    ),
+            return Stack(
+              children: [
+                CocktailCard(cocktail: cocktails[index],), // Non cambia
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _removeCocktail(cocktails[index]),
                   ),
-                );
-              },
-              child: CocktailCard(cocktail: cocktails[index]),
+                ),
+              ],
             );
           },
         );
