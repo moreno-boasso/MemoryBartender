@@ -27,7 +27,7 @@ class CocktailGrid extends StatelessWidget {
         ),
         itemCount: cocktails.length,
         itemBuilder: (context, index) {
-          return CocktailCard(cocktail: cocktails[index]);
+          return CocktailCard(cocktail: cocktails[index],);
         },
       ),
     );
