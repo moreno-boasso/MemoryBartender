@@ -25,7 +25,9 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
       future: CocktailService().getCocktailDetails(widget.cocktailId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: MemoColors.brownie,));
+          return const Center(
+            child: CircularProgressIndicator(color: MemoColors.brownie),
+          );
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData) {
@@ -73,6 +75,23 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
                   ],
                 ),
                 const FavoriteButton(),
+                Positioned(
+                  top: 20,
+                  left: 10,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: const BoxDecoration(
+                      color: Colors.black38,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
