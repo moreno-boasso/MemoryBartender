@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:memory_bartender/styles/colors.dart';
 import '../components/cocktail_detail_screen/conversion_detail.dart';
 import '../components/cocktail_detail_screen/favourite_button.dart';
 import '../components/cocktail_detail_screen/image_detail.dart';
@@ -8,11 +7,13 @@ import '../components/cocktail_detail_screen/instructions_detail.dart';
 import '../components/cocktail_detail_screen/ingredients_detail.dart';
 import '../models/cocktail.dart';
 import '../services/cocktail_service.dart';
+import '../styles/colors.dart';
 
 class CocktailDetailsPage extends StatefulWidget {
   final String cocktailId;
+  final VoidCallback onUpdate; // Aggiungi il callback
 
-  const CocktailDetailsPage({super.key, required this.cocktailId});
+  const CocktailDetailsPage({super.key, required this.cocktailId, required this.onUpdate});
 
   @override
   _CocktailDetailsPageState createState() => _CocktailDetailsPageState();
@@ -74,21 +75,34 @@ class _CocktailDetailsPageState extends State<CocktailDetailsPage> {
                     ),
                   ],
                 ),
-                const FavoriteButton(),
+                FavoriteButton(cocktail: cocktail),
                 Positioned(
                   top: 20,
                   left: 10,
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: const BoxDecoration(
-                      color: Colors.black38,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      widget.onUpdate(); // Chiama il callback quando si torna indietro
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: MemoColors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            spreadRadius: 2,
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: MemoColors.black,
+                        size: 25,
+                      ),
                     ),
                   ),
                 ),
