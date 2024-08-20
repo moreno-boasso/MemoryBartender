@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:memory_bartender/components/cocktail_detail_screen/create_image_detail.dart';
 import '../components/cocktail_detail_screen/conversion_detail.dart';
-import '../components/cocktail_detail_screen/image_detail.dart';
 import '../components/cocktail_detail_screen/cocktail_title.dart';
 import '../components/cocktail_detail_screen/instructions_detail.dart';
 import '../components/cocktail_detail_screen/ingredients_detail.dart';
@@ -20,17 +20,16 @@ class CreatedCocktailDetailsPage extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Gestisci l'immagine solo se è presente
                 cocktail.imageUrl.isNotEmpty
-                    ? CocktailImageHeader(cocktail: cocktail)
+                    ? CreatedCocktailImageHeader(cocktail: cocktail)
                     : SizedBox(
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height / 2,
                   child: Container(
                     color: Colors.grey[200],
-                    child: Center(
+                    child: const Center(
                       child: Text(
-                        'No Image Available',
+                        'Nessuna Immagine',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 18,
@@ -39,26 +38,18 @@ class CreatedCocktailDetailsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CocktailTitle(cocktail: cocktail),
-
                       const SizedBox(height: 30),
-
-                      IngredientsDetail(ingredients: cocktail.ingredients ?? []),
-
+                      IngredientsDetail(ingredients: cocktail.ingredients),
                       const SizedBox(height: 40),
-
-                      CocktailInstructions(instructions: cocktail.instructions ?? ''),
-
+                      CocktailInstructions(instructions: cocktail.instructions),
                       const SizedBox(height: 10),
-
                       ConversionSection(cocktail: cocktail),
                       const SizedBox(height: 10),
                     ],
@@ -71,7 +62,7 @@ class CreatedCocktailDetailsPage extends StatelessWidget {
               left: 10,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pop(context); // Torna alla schermata precedente
+                  Navigator.pop(context);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(5),

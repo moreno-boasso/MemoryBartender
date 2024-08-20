@@ -5,20 +5,29 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/cocktail.dart';
+import '../styles/colors.dart';
 
 class CreateScreen extends StatefulWidget {
+  const CreateScreen({super.key});
+
   @override
   _CreateScreenState createState() => _CreateScreenState();
 }
 
 class _CreateScreenState extends State<CreateScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _name = '';
+  final _nameController = TextEditingController();
   File? _image;
   bool _isAlcoholic = true;
-  List<Map<String, String>> _ingredients = [];
+  final List<Map<String, String>> _ingredients = [];
   String _instructions = '';
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
@@ -35,9 +44,18 @@ class _CreateScreenState extends State<CreateScreen> {
     });
   }
 
+  void _removeIngredient(int index) {
+    setState(() {
+      _ingredients.removeAt(index);
+    });
+  }
+
   Future<void> _saveCocktail() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
+      // Usa il valore del controller per ottenere il nome
+      final name = _nameController.text;
 
       String? imageBase64;
       if (_image != null) {
@@ -47,7 +65,7 @@ class _CreateScreenState extends State<CreateScreen> {
 
       Cocktail newCocktail = Cocktail(
         id: DateTime.now().toString(),
-        name: _name,
+        name: name,
         imageUrl: imageBase64 ?? '',
         isAlcoholic: _isAlcoholic,
         ingredients: _ingredients,
@@ -60,35 +78,82 @@ class _CreateScreenState extends State<CreateScreen> {
       cocktails.add(cocktailJson);
       await prefs.setStringList('cocktails', cocktails);
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      // Mostra un messaggio di successo
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Cocktail salvato con successo!'),
       ));
+
+      // Clear all inputs
+      _clearInputs();
     }
+  }
+
+  void _clearInputs() {
+    setState(() {
+      _nameController.clear();
+      _image = null;
+      _isAlcoholic = true;
+      _ingredients.clear();
+      _instructions = '';
+    });
+  }
+
+
+  void _showImageSourceActionSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Galleria'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Fotocamera'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crea Cocktail'),
-        backgroundColor: Colors.deepOrange,
+        title: const Text('Crea Cocktail'),
+        elevation: 0, // Disabilita l'ombra
+        surfaceTintColor: Colors.transparent,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
               _buildImagePicker(),
-              SizedBox(height: 16),
+              const SizedBox(height: 25),
               _buildNameField(),
-              SizedBox(height: 16),
+              const SizedBox(height: 25),
               _buildAlcoholicSwitch(),
-              SizedBox(height: 16),
+              const SizedBox(height: 25),
               _buildIngredientsSection(),
-              SizedBox(height: 16),
+              const SizedBox(height: 25),
               _buildInstructionsField(),
-              SizedBox(height: 20),
+              const SizedBox(height: 25),
               _buildSaveButton(),
             ],
           ),
@@ -100,72 +165,123 @@ class _CreateScreenState extends State<CreateScreen> {
   Widget _buildImagePicker() {
     return Column(
       children: [
-        _image == null
-            ? Card(
+        Card(
           elevation: 5,
-          child: ListTile(
-            title: Text('Nessuna immagine selezionata.'),
-            trailing: Icon(Icons.image, color: Colors.deepOrange),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
           ),
-        )
-            : Card(
-          elevation: 5,
-          child: Image.file(
-            _image!,
-            height: 200,
-            width: double.infinity,
-            fit: BoxFit.cover,
+          child: Stack(
+            alignment: Alignment.topRight,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: _image == null
+                    ? Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Icon(
+                    Icons.photo_library,
+                    size: 50,
+                    color: Colors.grey[600],
+                  ),
+                )
+                    : Image.file(
+                  _image!,
+                  height: 200,
+                  width: 200,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              if (_image != null)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.white),
+                      onPressed: () {
+                        setState(() {
+                          _image = null;
+                        });
+                      },
+                      iconSize: 26,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
-        SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ElevatedButton.icon(
-              onPressed: () => _pickImage(ImageSource.camera),
-              icon: Icon(Icons.camera_alt),
-              label: Text('Fotocamera'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-              ),
-            ),
-            ElevatedButton.icon(
-              onPressed: () => _pickImage(ImageSource.gallery),
-              icon: Icon(Icons.photo_library),
-              label: Text('Galleria'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-              ),
-            ),
-          ],
+        const SizedBox(height: 8),
+        ElevatedButton.icon(
+          onPressed: _showImageSourceActionSheet,
+          icon: const Icon(
+            Icons.photo,
+            color: MemoColors.brownie,
+          ),
+          label: const Text(
+            'Inserisci Copertina',
+            style: TextStyle(color: MemoColors.brownie),
+          ),
         ),
       ],
     );
   }
 
   Widget _buildNameField() {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: 'Nome',
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Inserisci un nome';
-        }
-        return null;
-      },
-      onSaved: (value) => _name = value!,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Nome del Cocktail:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: _nameController,
+          decoration: const InputDecoration(
+            labelText: 'Nome',
+            labelStyle: TextStyle(color: MemoColors.brownie),
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Inserisci un nome';
+            }
+            return null;
+          },
+          onSaved: (value) {
+            if (value != null) {
+              // Anche se usiamo il controller, è bene aggiornare la variabile
+              // per mantenere la coerenza
+              _nameController.text = value;
+            }
+          },
+        ),
+      ],
     );
   }
 
   Widget _buildAlcoholicSwitch() {
-    return SwitchListTile(
-      title: Text('Alcolico'),
-      value: _isAlcoholic,
-      onChanged: (value) => setState(() => _isAlcoholic = value),
-      activeColor: Colors.deepOrange,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("E' Alcolico:",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        SwitchListTile(
+          title: const Text('Alcolico'),
+          value: _isAlcoholic,
+          onChanged: (value) => setState(() => _isAlcoholic = value),
+          activeColor: MemoColors.brownie,
+        ),
+      ],
     );
   }
 
@@ -173,53 +289,60 @@ class _CreateScreenState extends State<CreateScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Ingredienti', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        SizedBox(height: 8),
-        ..._ingredients.map((ingredient) {
-          int index = _ingredients.indexOf(ingredient);
+        const Text('Inserisci Ingredienti:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        ..._ingredients.asMap().entries.map((entry) {
+          int index = entry.key;
+          Map<String, String> ingredient = entry.value;
           return Card(
             elevation: 2,
             margin: const EdgeInsets.symmetric(vertical: 4),
             child: ListTile(
-              contentPadding: EdgeInsets.all(8),
+              contentPadding: const EdgeInsets.all(8),
               title: Row(
                 children: [
                   Expanded(
                     child: TextFormField(
-                      decoration: InputDecoration(labelText: 'Ingrediente'),
+                      decoration: const InputDecoration(
+                        labelText: 'Ingrediente e Quantità',
+                        labelStyle: TextStyle(color: MemoColors.brownie),
+                      ),
+                      initialValue: ingredient['ingredient'],
                       onChanged: (value) {
-                        _ingredients[index]['ingredient'] = value;
+                        setState(() {
+                          _ingredients[index]['ingredient'] = value;
+                        });
                       },
                     ),
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(labelText: 'Quantità'),
-                      onChanged: (value) {
-                        _ingredients[index]['amount'] = value;
-                      },
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      setState(() {
-                        _ingredients.removeAt(index);
-                      });
-                    },
                   ),
                 ],
               ),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete, color: MemoColors.brownie),
+                onPressed: () => _removeIngredient(index),
+              ),
             ),
           );
-        }).toList(),
-        SizedBox(height: 8),
+        }),
+        const SizedBox(height: 8),
         ElevatedButton(
           onPressed: _addIngredient,
-          child: Text('Aggiungi Ingrediente'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepOrange,
+            backgroundColor: MemoColors.beige,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          ),
+          child: const Center(
+            child: Text(
+              'Aggiungi Ingrediente',
+              style: TextStyle(
+                color: MemoColors.brownie,
+                fontSize: 16,
+              ),
+            ),
           ),
         ),
       ],
@@ -227,25 +350,31 @@ class _CreateScreenState extends State<CreateScreen> {
   }
 
   Widget _buildInstructionsField() {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: 'Istruzioni',
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      ),
-      maxLines: 5,
-      onSaved: (value) => _instructions = value!,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Inserisci Istruzioni:",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        TextFormField(
+          decoration: const InputDecoration(
+            labelText: 'Istruzioni',
+            labelStyle: TextStyle(color: MemoColors.brownie),
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          ),
+          maxLines: 5,
+          initialValue: _instructions,
+          onSaved: (value) => _instructions = value!,
+        ),
+      ],
     );
   }
 
   Widget _buildSaveButton() {
     return ElevatedButton(
       onPressed: _saveCocktail,
-      child: Text('Salva Cocktail'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepOrange,
-        padding: EdgeInsets.symmetric(vertical: 16),
-      ),
+      child: const Text('Crea Cocktail'),
     );
   }
 }

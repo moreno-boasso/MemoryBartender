@@ -21,7 +21,7 @@ class IngredientsDetail extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         // Verifica se ingredients è null o vuoto
-        if (ingredients == null || ingredients.isEmpty)
+        if (ingredients.isEmpty)
           const Text(
             'Nessun ingrediente disponibile',
             style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
