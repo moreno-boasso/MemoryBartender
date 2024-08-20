@@ -28,30 +28,32 @@ class _FavoritesScreenState extends State<FavoritesScreen> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(text: 'Da Provare', icon: Icon(Icons.access_time_filled)),
-              Tab(text: 'Fatto', icon: Icon(Icons.check_circle)),
-              Tab(text: 'Creati da me', icon: Icon(Icons.account_circle)),
-            ],
-            indicatorColor: MemoColors.brownie,
-            labelColor:  MemoColors.brownie,
-            unselectedLabelColor: Colors.grey,
-          ),
-          Expanded(
-            child: TabBarView(
+      body: SafeArea(
+        child: Column(
+          children: [
+            TabBar(
               controller: _tabController,
-              children: const [
-                DaProvareTab(), // Assicurati che questo widget sia definito correttamente
-                FattoTab(),     // Assicurati che questo widget sia definito correttamente
-                CreatiDaMeTab(), // Assicurati che questo widget sia definito correttamente
+              tabs: const [
+                Tab(text: 'Da Provare', icon: Icon(Icons.access_time_filled)),
+                Tab(text: 'Fatto', icon: Icon(Icons.check_circle)),
+                Tab(text: 'Creati da me', icon: Icon(Icons.account_circle)),
               ],
+              indicatorColor: MemoColors.brownie,
+              labelColor: MemoColors.brownie,
+              unselectedLabelColor: Colors.grey,
             ),
-          ),
-        ],
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: const [
+                  DaProvareTab(),
+                  FattoTab(),
+                  CreatiDaMeTab(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

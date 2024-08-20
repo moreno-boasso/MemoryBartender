@@ -11,6 +11,9 @@ class CocktailTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final textWidthConstraint = screenWidth * 0.8;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -20,26 +23,28 @@ class CocktailTitle extends StatelessWidget {
           color: MemoColors.brownie,
           margin: const EdgeInsets.only(right: 8),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.8,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                constraints: BoxConstraints(
+                  maxWidth: textWidthConstraint,
+                ),
+                child: AutoSizeText(
+                  cocktail.name,
+                  minFontSize: 20,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: MemoText.titleDetail,
+                ),
               ),
-              child: AutoSizeText(
-                cocktail.name,
-                minFontSize: 20,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: MemoText.titleDetail,
+              Text(
+                cocktail.isAlcoholic ? 'Alcolico' : 'Analcolico',
+                style: MemoText.alcoolDetail,
               ),
-            ),
-            Text(
-              cocktail.isAlcoholic ? 'Alcolico' : 'Analcolico',
-              style: MemoText.alcoolDetail
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

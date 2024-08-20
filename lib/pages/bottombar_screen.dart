@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   static final List<Widget> _widgetOptions = <Widget>[
     const SearchScreen(),
-    CreateScreen(),
+    const CreateScreen(),
     const FavoritesScreen(),
   ];
 
@@ -38,12 +38,13 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: PageView(
         controller: _pageController,
-        children: _widgetOptions,
         onPageChanged: (index) {
           setState(() {
             _selectedIndex = index;
           });
         },
+        physics: const NeverScrollableScrollPhysics(),
+        children: _widgetOptions, // Disable scrolling
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

@@ -10,8 +10,8 @@ class CreateCocktailCard extends StatelessWidget {
   const CreateCocktailCard({
     required this.cocktail,
     required this.onDelete,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,18 +41,18 @@ class CreateCocktailCard extends StatelessWidget {
                   width: double.infinity,
                   height: 140,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
                         blurRadius: 4,
                         spreadRadius: 1,
-                        offset: Offset(0, 2),
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
                     child: Image.memory(
                       base64Decode(cocktail.imageUrl),
                       fit: BoxFit.cover,
@@ -73,29 +73,30 @@ class CreateCocktailCard extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    cocktail.name ?? 'Unnamed Cocktail',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    cocktail.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    cocktail.isAlcoholic != null ? (cocktail.isAlcoholic! ? 'Alcolico' : 'Analcolico') : 'Unknown',
-                    style: TextStyle(color: Colors.grey),
+                     (cocktail.isAlcoholic ? 'Alcolico' : 'Analcolico'),
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 ),
-                SizedBox(height: 8.0), // Spazio tra il testo e il bordo inferiore
+                const SizedBox(height: 8.0), // Spazio tra il testo e il bordo inferiore
               ],
             ),
             Positioned(
               top: 8,
               right: 8,
               child: IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
+                icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: onDelete,
               ),
             ),

@@ -52,13 +52,13 @@ class _CreatiDaMeTabState extends State<CreatiDaMeTab> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('Nessun cocktail creato.'));
+          return const Center(child: Text('Nessun cocktail creato.'));
         }
 
         final cocktails = snapshot.data!;
         return GridView.builder(
           padding: const EdgeInsets.all(8.0),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
