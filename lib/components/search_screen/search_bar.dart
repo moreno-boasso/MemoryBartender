@@ -1,3 +1,4 @@
+import 'dart:async'; // Importa per il Timer
 import 'package:flutter/material.dart';
 import '../../styles/colors.dart';
 
@@ -9,32 +10,45 @@ class CustomSearchBar extends StatefulWidget {
   @override
   _CustomSearchBarState createState() => _CustomSearchBarState();
 }
+
 class _CustomSearchBarState extends State<CustomSearchBar> {
   final TextEditingController _controller = TextEditingController();
   String _selectedFilter = 'Nome'; // Inizialmente selezionato 'Nome'
+  Timer? _debounce;
+
   String get hintText {
-    if (_selectedFilter == 'Nome') {
-      return 'Cerca cocktail...';
-    } else if (_selectedFilter == 'Ingrediente') {
-      return 'Cerca ingrediente...';
+    switch (_selectedFilter) {
+      case 'Nome':
+        return 'Cerca cocktail...';
+      case 'Ingrediente':
+        return 'Cerca ingrediente...';
+      default:
+        return '';
     }
-    return '';
   }
+
   @override
   void initState() {
     super.initState();
     _controller.addListener(_onSearchTextChanged);
   }
+
   @override
   void dispose() {
     _controller.removeListener(_onSearchTextChanged);
+    _controller.dispose();
+    _debounce?.cancel(); // Assicurati di annullare il timer quando il widget viene distrutto
     super.dispose();
   }
+
   void _onSearchTextChanged() {
-    if (_controller.text.isEmpty) {
-      widget.onSearch('', _selectedFilter, false); // false indica ricerca non manuale
-    }
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      String trimmedValue = _controller.text.trim();
+      widget.onSearch(trimmedValue, _selectedFilter, true);
+    });
   }
+
   void _onFilterChanged(String? newValue) {
     setState(() {
       _selectedFilter = newValue!;
@@ -42,7 +56,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     });
     widget.onSearch('', _selectedFilter, false);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -69,12 +82,11 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 ),
                 style: const TextStyle(fontSize: 16.0),
                 onChanged: (value) {
-                  String trimmedValue = value.trim();
-                  widget.onSearch(trimmedValue, _selectedFilter, true);
+                  _onSearchTextChanged(); // Richiama la funzione con debounce
                 },
-
               ),
             ),
+            const SizedBox(width: 10.0),
             DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _selectedFilter,
@@ -85,6 +97,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   );
                 }).toList(),
                 onChanged: _onFilterChanged,
+                icon: const Icon(Icons.filter_alt, color: MemoColors.brownie),
               ),
             ),
           ],

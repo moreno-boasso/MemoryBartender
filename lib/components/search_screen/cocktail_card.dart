@@ -12,6 +12,11 @@ class CocktailCard extends StatelessWidget {
 
   const CocktailCard({super.key, required this.cocktail});
 
+  static const double _imageHeight = 140.0;
+  static const double _cardMargin = 10.0;
+  static const double _borderRadius = 8.0;
+  static const EdgeInsets _padding = EdgeInsets.all(8.0);
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -19,7 +24,7 @@ class CocktailCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CocktailDetailsPage(cocktailId: cocktail.id,),
+            builder: (context) => CocktailDetailsPage(cocktailId: cocktail.id),
           ),
         );
       },
@@ -34,64 +39,13 @@ class CocktailCard extends StatelessWidget {
       child: Card(
         elevation: 0,
         color: Colors.transparent,
-        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        margin: const EdgeInsets.symmetric(vertical: _cardMargin, horizontal: _cardMargin),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              height: 140,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: MemoColors.black.withOpacity(0.4),
-                    blurRadius: 3,
-                    spreadRadius: 0.5,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Stack(
-                  children: [
-                    Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
-                        width: double.infinity,
-                        height: 140,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Image.network(
-                      cocktail.imageUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 140,
-                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        } else {
-                          return Shimmer.fromColors(
-                            baseColor: MemoColors.beige,
-                            highlightColor: MemoColors.beige,
-                            child: Container(
-                              width: double.infinity,
-                              height: 140,
-                              color: MemoColors.white,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            _buildImage(),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: _padding,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -111,6 +65,54 @@ class CocktailCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    return Container(
+      width: double.infinity,
+      height: _imageHeight,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(_borderRadius),
+        boxShadow: [
+          BoxShadow(
+            color: MemoColors.black.withOpacity(0.4),
+            blurRadius: 3,
+            spreadRadius: 0.5,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(_borderRadius),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            _buildShimmer(),
+            Image.network(
+              cocktail.imageUrl,
+              fit: BoxFit.cover,
+              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) {
+                  return child;
+                } else {
+                  return _buildShimmer();
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        color: Colors.white,
       ),
     );
   }

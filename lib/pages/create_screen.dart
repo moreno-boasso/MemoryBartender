@@ -54,16 +54,15 @@ class _CreateScreenState extends State<CreateScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      // Usa il valore del controller per ottenere il nome
       final name = _nameController.text;
 
       String? imageBase64;
       if (_image != null) {
-        List<int> imageBytes = await _image!.readAsBytes();
+        final imageBytes = await _image!.readAsBytes();
         imageBase64 = base64Encode(imageBytes);
       }
 
-      Cocktail newCocktail = Cocktail(
+      final newCocktail = Cocktail(
         id: DateTime.now().toString(),
         name: name,
         imageUrl: imageBase64 ?? '',
@@ -72,18 +71,18 @@ class _CreateScreenState extends State<CreateScreen> {
         instructions: _instructions,
       );
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      List<String> cocktails = prefs.getStringList('cocktails') ?? [];
-      String cocktailJson = jsonEncode(newCocktail.toJson());
+      final prefs = await SharedPreferences.getInstance();
+      final cocktails = prefs.getStringList('cocktails') ?? [];
+      final cocktailJson = jsonEncode(newCocktail.toJson());
       cocktails.add(cocktailJson);
       await prefs.setStringList('cocktails', cocktails);
 
-      // Mostra un messaggio di successo
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Cocktail salvato con successo!'),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cocktail salvato con successo!'),
+        ),
+      );
 
-      // Clear all inputs
       _clearInputs();
     }
   }
@@ -98,11 +97,10 @@ class _CreateScreenState extends State<CreateScreen> {
     });
   }
 
-
   void _showImageSourceActionSheet() {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -135,7 +133,7 @@ class _CreateScreenState extends State<CreateScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Crea Cocktail'),
-        elevation: 0, // Disabilita l'ombra
+        elevation: 0,
         surfaceTintColor: Colors.transparent,
       ),
       body: Padding(
@@ -183,7 +181,7 @@ class _CreateScreenState extends State<CreateScreen> {
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(20.0),
                   ),
-                  child: Icon(
+                  child:  Icon(
                     Icons.photo_library,
                     size: 50,
                     color: Colors.grey[600],
@@ -239,8 +237,10 @@ class _CreateScreenState extends State<CreateScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Nome del Cocktail:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text(
+          'Nome del Cocktail:',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         TextFormField(
           controller: _nameController,
@@ -258,8 +258,6 @@ class _CreateScreenState extends State<CreateScreen> {
           },
           onSaved: (value) {
             if (value != null) {
-              // Anche se usiamo il controller, è bene aggiornare la variabile
-              // per mantenere la coerenza
               _nameController.text = value;
             }
           },
@@ -272,8 +270,10 @@ class _CreateScreenState extends State<CreateScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("E' Alcolico:",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text(
+          "E' Alcolico:",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         SwitchListTile(
           title: const Text('Alcolico'),
@@ -289,34 +289,30 @@ class _CreateScreenState extends State<CreateScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Inserisci Ingredienti:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text(
+          'Inserisci Ingredienti:',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         ..._ingredients.asMap().entries.map((entry) {
-          int index = entry.key;
-          Map<String, String> ingredient = entry.value;
+          final index = entry.key;
+          final ingredient = entry.value;
           return Card(
             elevation: 2,
             margin: const EdgeInsets.symmetric(vertical: 4),
             child: ListTile(
               contentPadding: const EdgeInsets.all(8),
-              title: Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Ingrediente e Quantità',
-                        labelStyle: TextStyle(color: MemoColors.brownie),
-                      ),
-                      initialValue: ingredient['ingredient'],
-                      onChanged: (value) {
-                        setState(() {
-                          _ingredients[index]['ingredient'] = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
+              title: TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Ingrediente e Quantità',
+                  labelStyle: TextStyle(color: MemoColors.brownie),
+                ),
+                initialValue: ingredient['ingredient'],
+                onChanged: (value) {
+                  setState(() {
+                    _ingredients[index]['ingredient'] = value;
+                  });
+                },
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: MemoColors.brownie),
@@ -324,7 +320,7 @@ class _CreateScreenState extends State<CreateScreen> {
               ),
             ),
           );
-        }),
+        }).toList(),
         const SizedBox(height: 8),
         ElevatedButton(
           onPressed: _addIngredient,
@@ -353,8 +349,10 @@ class _CreateScreenState extends State<CreateScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Inserisci Istruzioni:",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text(
+          "Inserisci Istruzioni:",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         TextFormField(
           decoration: const InputDecoration(

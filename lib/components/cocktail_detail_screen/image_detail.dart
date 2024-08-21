@@ -12,9 +12,11 @@ class CocktailImageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double containerHeight = MediaQuery.of(context).size.height / 2;
+
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height / 2,
+      height: containerHeight,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(50)),
         boxShadow: [
@@ -25,11 +27,18 @@ class CocktailImageHeader extends StatelessWidget {
             offset: const Offset(0, 3),
           ),
         ],
-        image: DecorationImage(
-          image: NetworkImage(cocktail.imageUrl),
-          fit: BoxFit.cover,
-        ),
+        image: _buildImage(),
       ),
+    );
+  }
+
+  DecorationImage _buildImage() {
+    // Fallback to a placeholder image if the URL is empty
+    final imageUrl = cocktail.imageUrl.isNotEmpty ? cocktail.imageUrl : 'https://via.placeholder.com/400x300';
+
+    return DecorationImage(
+      image: NetworkImage(imageUrl),
+      fit: BoxFit.cover,
     );
   }
 }

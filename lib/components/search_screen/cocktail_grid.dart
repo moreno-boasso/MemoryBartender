@@ -17,18 +17,22 @@ class CocktailGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GridView.builder(
-        controller: scrollController,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
-          mainAxisSpacing: 5.0,
-          crossAxisSpacing: 5.0,
-          childAspectRatio: 0.7,
-        ),
-        itemCount: cocktails.length,
-        itemBuilder: (context, index) {
-          return CocktailCard(cocktail: cocktails[index],);
-        },
+      child: Stack(
+        children: [
+          GridView.builder(
+            controller: scrollController,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
+              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8.0,
+              childAspectRatio: 0.7,
+            ),
+            itemCount: cocktails.length,
+            itemBuilder: (context, index) {
+              return CocktailCard(cocktail: cocktails[index]);
+            },
+          ),
+        ],
       ),
     );
   }

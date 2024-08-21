@@ -3,52 +3,53 @@ import '../../models/cocktail.dart';
 import '../../services/favorite_service.dart';
 import '../../components/search_screen/cocktail_card.dart';
 
-class DaProvareTab extends StatefulWidget {
+class DaProvareTab extends StatelessWidget {
   const DaProvareTab({super.key});
 
   @override
-  _DaProvareTabState createState() => _DaProvareTabState();
-}
-
-class _DaProvareTabState extends State<DaProvareTab> {
-  late Future<List<Cocktail>> _daProvareCocktails;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCocktails();
-  }
-
-  Future<void> _loadCocktails() async {
-    setState(() {
-      _daProvareCocktails = FavoritesService().getDaProvare();
-    });
-  }
-
-  Future<void> _removeCocktail(Cocktail cocktail) async {
-    await FavoritesService().removeFromDaProvare(cocktail.id);
-    _loadCocktails(); // Ricarica la lista
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return CocktailGrid(
-      futureCocktails: _daProvareCocktails,
-      onRemoveCocktail: _removeCocktail,
-      emptyMessage: 'Nessun cocktail salvato. ',
+    return _CocktailTab(
+      fetchCocktails: () => FavoritesService().getDaProvare(),
+      onRemoveCocktail: (cocktail) async {
+        await FavoritesService().removeFromDaProvare(cocktail.id);
+      },
+      emptyMessage: 'Nessun cocktail salvato.',
     );
   }
 }
 
-class FattoTab extends StatefulWidget {
+class FattoTab extends StatelessWidget {
   const FattoTab({super.key});
 
   @override
-  _FattoTabState createState() => _FattoTabState();
+  Widget build(BuildContext context) {
+    return _CocktailTab(
+      fetchCocktails: () => FavoritesService().getFatto(),
+      onRemoveCocktail: (cocktail) async {
+        await FavoritesService().removeFromFatto(cocktail.id);
+      },
+      emptyMessage: 'Nessun cocktail salvato.',
+    );
+  }
 }
 
-class _FattoTabState extends State<FattoTab> {
-  late Future<List<Cocktail>> _fattoCocktails;
+class _CocktailTab extends StatefulWidget {
+  final Future<List<Cocktail>> Function() fetchCocktails;
+  final Future<void> Function(Cocktail) onRemoveCocktail;
+  final String emptyMessage;
+
+  const _CocktailTab({
+    required this.fetchCocktails,
+    required this.onRemoveCocktail,
+    required this.emptyMessage,
+  });
+
+  @override
+  __CocktailTabState createState() => __CocktailTabState();
+}
+
+class __CocktailTabState extends State<_CocktailTab> {
+  late Future<List<Cocktail>> _cocktailsFuture;
 
   @override
   void initState() {
@@ -58,28 +59,26 @@ class _FattoTabState extends State<FattoTab> {
 
   Future<void> _loadCocktails() async {
     setState(() {
-      _fattoCocktails = FavoritesService().getFatto();
+      _cocktailsFuture = widget.fetchCocktails();
     });
-  }
-
-  Future<void> _removeCocktail(Cocktail cocktail) async {
-    await FavoritesService().removeFromFatto(cocktail.id);
-    _loadCocktails(); // Ricarica la lista
   }
 
   @override
   Widget build(BuildContext context) {
     return CocktailGrid(
-      futureCocktails: _fattoCocktails,
-      onRemoveCocktail: _removeCocktail,
-      emptyMessage: 'Nessun cocktail salvato.',
+      futureCocktails: _cocktailsFuture,
+      onRemoveCocktail: (cocktail) async {
+        await widget.onRemoveCocktail(cocktail);
+        _loadCocktails(); // Ricarica la lista dopo la rimozione
+      },
+      emptyMessage: widget.emptyMessage,
     );
   }
 }
 
 class CocktailGrid extends StatelessWidget {
   final Future<List<Cocktail>> futureCocktails;
-  final Function(Cocktail) onRemoveCocktail;
+  final Future<void> Function(Cocktail) onRemoveCocktail;
   final String emptyMessage;
 
   const CocktailGrid({
@@ -97,7 +96,7 @@ class CocktailGrid extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text('Errore: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(child: Text(emptyMessage));
         }

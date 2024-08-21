@@ -13,18 +13,20 @@ class CreatedCocktailDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Column(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 cocktail.imageUrl.isNotEmpty
                     ? CreatedCocktailImageHeader(cocktail: cocktail)
                     : SizedBox(
                   width: double.infinity,
-                  height: MediaQuery.of(context).size.height / 2,
+                  height: screenHeight / 2,
                   child: Container(
                     color: Colors.grey[200],
                     child: const Center(
@@ -57,37 +59,35 @@ class CreatedCocktailDetailsPage extends StatelessWidget {
                 ),
               ],
             ),
-            Positioned(
-              top: 20,
-              left: 10,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.black38,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        spreadRadius: 2,
-                        blurRadius: 4,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 25,
-                  ),
+          ),
+          Positioned(
+            top: 20,
+            left: 10,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black38,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 25,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

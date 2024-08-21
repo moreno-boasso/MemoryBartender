@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../styles/texts.dart';
@@ -20,7 +21,6 @@ class IngredientsDetail extends StatelessWidget {
           style: MemoText.subtitleDetail,
         ),
         const SizedBox(height: 10),
-        // Verifica se ingredients è null o vuoto
         if (ingredients.isEmpty)
           const Text(
             'Nessun ingrediente disponibile',
@@ -60,59 +60,52 @@ class IngredientsDetail extends StatelessWidget {
   }
 
   Widget _buildMeasureText(String measure) {
-    if (measure.toLowerCase().contains('tsp')) {
-      int numTsp = int.tryParse(measure.toLowerCase().replaceAll('tsp', '').trim()) ?? 0;
-      String teaspoonText = (numTsp == 1) ? 'cucchiaino' : 'cucchiaini';
+    final measureLowerCase = measure.toLowerCase();
+
+    if (measureLowerCase.contains('tsp')) {
+      final numTsp = int.tryParse(measureLowerCase.replaceAll('tsp', '').trim()) ?? 0;
+      final teaspoonText = numTsp == 1 ? 'cucchiaino' : 'cucchiaini';
       return AutoSizeText(
-        minFontSize: 14,
-        maxLines: 2,
         measure.replaceAll('tsp', teaspoonText),
         style: MemoText.ingredientsMeasure,
         textAlign: TextAlign.center,
+        minFontSize: 14,
+        maxLines: 2,
       );
-    } else if (measure.toLowerCase().contains('dash')) {
+    } else if (measureLowerCase.contains('dash')) {
       return const AutoSizeText(
         'Riempi con',
-        minFontSize: 14,
-        maxLines: 2,
         style: MemoText.ingredientsMeasure,
         textAlign: TextAlign.center,
-      );
-    } else if (measure.toLowerCase().contains('part')) {
-      if (measure.toLowerCase().contains('parts')) {
-        return AutoSizeText(
-          minFontSize: 14,
-          maxLines: 2,
-          measure.replaceAll('parts', 'parti'),
-          style: MemoText.ingredientsMeasure,
-          textAlign: TextAlign.center,
-        );
-      } else {
-        return AutoSizeText(
-          minFontSize: 14,
-          maxLines: 2,
-          measure.replaceAll('part', 'parte'),
-          style: MemoText.ingredientsMeasure,
-          textAlign: TextAlign.center,
-        );
-      }
-    } else if (measure.toLowerCase().contains('tblsp')) {
-      int numTbsp = int.tryParse(measure.toLowerCase().replaceAll('tblsp', '').trim()) ?? 0;
-      String tablespoonText = (numTbsp == 1) ? 'cucchiaio' : 'cucchiai';
-      return AutoSizeText(
         minFontSize: 14,
         maxLines: 2,
+      );
+    } else if (measureLowerCase.contains('part')) {
+      final partText = measureLowerCase.contains('parts') ? 'parti' : 'parte';
+      return AutoSizeText(
+        measure.replaceAll('part', partText),
+        style: MemoText.ingredientsMeasure,
+        textAlign: TextAlign.center,
+        minFontSize: 14,
+        maxLines: 2,
+      );
+    } else if (measureLowerCase.contains('tblsp')) {
+      final numTbsp = int.tryParse(measureLowerCase.replaceAll('tblsp', '').trim()) ?? 0;
+      final tablespoonText = numTbsp == 1 ? 'cucchiaio' : 'cucchiai';
+      return AutoSizeText(
         measure.replaceAll('tblsp', tablespoonText),
         style: MemoText.ingredientsMeasure,
         textAlign: TextAlign.center,
+        minFontSize: 14,
+        maxLines: 2,
       );
     } else {
       return AutoSizeText(
-        minFontSize: 14,
-        maxLines: 2,
         measure,
         style: MemoText.ingredientsMeasure,
         textAlign: TextAlign.center,
+        minFontSize: 14,
+        maxLines: 2,
       );
     }
   }

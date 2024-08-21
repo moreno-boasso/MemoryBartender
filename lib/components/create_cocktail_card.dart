@@ -20,7 +20,7 @@ class CreateCocktailCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CreatedCocktailDetailsPage(cocktail: cocktail), // Passa il cocktail
+            builder: (context) => CreatedCocktailDetailsPage(cocktail: cocktail),
           ),
         );
       },
@@ -85,11 +85,11 @@ class CreateCocktailCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                     (cocktail.isAlcoholic ? 'Alcolico' : 'Analcolico'),
-                    style: const TextStyle(color: Colors.grey),
+                    cocktail.isAlcoholic ? 'Alcolico' : 'Analcolico',
+                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
-                const SizedBox(height: 8.0), // Spazio tra il testo e il bordo inferiore
+                const SizedBox(height: 8.0),
               ],
             ),
             Positioned(
@@ -98,6 +98,7 @@ class CreateCocktailCard extends StatelessWidget {
               child: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: onDelete,
+                tooltip: 'Elimina cocktail',
               ),
             ),
           ],

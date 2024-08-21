@@ -4,8 +4,8 @@ import '../../styles/colors.dart';
 import '../../styles/texts.dart';
 
 enum ConversionUnit {
-  Ounce,
-  Shot,
+  ounce,
+  shot,
 }
 
 class ConversionSection extends StatefulWidget {
@@ -19,7 +19,7 @@ class ConversionSection extends StatefulWidget {
 
 class _ConversionSectionState extends State<ConversionSection> {
   List<int> conversionsToShow = [1, 2, 3];
-  ConversionUnit _selectedUnit = ConversionUnit.Ounce;
+  ConversionUnit _selectedUnit = ConversionUnit.ounce;
 
   @override
   Widget build(BuildContext context) {
@@ -45,28 +45,21 @@ class _ConversionSectionState extends State<ConversionSection> {
             'Conversioni:',
             style: MemoText.subtitleDetail,
           ),
-
           const SizedBox(height: 10),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildConversionButton(ConversionUnit.Ounce, Icons.local_drink, 'Oz'),
-              _buildConversionButton(ConversionUnit.Shot, Icons.water_drop, 'Shots'),
+              _buildConversionButton(ConversionUnit.ounce, Icons.local_drink, 'Oz'),
+              _buildConversionButton(ConversionUnit.shot, Icons.water_drop, 'Shots'),
             ],
           ),
-
           const SizedBox(height: 10),
-
           // Righe di conversione
           ..._buildConversionRows(widget.cocktail, _selectedUnit),
-
           Center(
             child: TextButton(
-              onPressed: () {
-                _loadMoreConversions(widget.cocktail);
-              },
-              child: const Icon(Icons.keyboard_arrow_down,color: MemoColors.black,),
+              onPressed: _loadMoreConversions,
+              child: const Icon(Icons.keyboard_arrow_down, color: MemoColors.black),
             ),
           ),
         ],
@@ -75,46 +68,36 @@ class _ConversionSectionState extends State<ConversionSection> {
   }
 
   List<Widget> _buildConversionRows(Cocktail cocktail, ConversionUnit unit) {
-    List<Widget> rows = [];
+    return conversionsToShow.map((int i) {
+      final value = i.toDouble();
+      final label = _getUnitLabel(unit);
+      final convertedValue = _convertToCl(value, unit);
 
-    for (int i in conversionsToShow) {
-      double value = i.toDouble();
-      String label = _getUnitLabel(unit);
-
-      double convertedValue = _convertToCl(value, unit);
-
-      String valueText = '${value.toStringAsFixed(0)} $label';
-      String convertedText = '≈ ${convertedValue.toStringAsFixed(0)} cl';
-
-      rows.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                valueText,
-                style: MemoText.conversionNumbers
-              ),
-              const SizedBox(width: 5,),
-              Text(
-                convertedText,
-                  style: MemoText.conversionNumbers
-              ),
-            ],
-          ),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${value.toStringAsFixed(0)} $label',
+              style: MemoText.conversionNumbers,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              '≈ ${convertedValue.toStringAsFixed(0)} cl',
+              style: MemoText.conversionNumbers,
+            ),
+          ],
         ),
       );
-    }
-
-    return rows;
+    }).toList();
   }
 
   double _convertToCl(double value, ConversionUnit unit) {
     switch (unit) {
-      case ConversionUnit.Ounce:
-        return value *  2.95735;
-      case ConversionUnit.Shot:
+      case ConversionUnit.ounce:
+        return value * 2.95735;
+      case ConversionUnit.shot:
         return value * 5;
       default:
         return 0.0;
@@ -123,9 +106,9 @@ class _ConversionSectionState extends State<ConversionSection> {
 
   String _getUnitLabel(ConversionUnit unit) {
     switch (unit) {
-      case ConversionUnit.Ounce:
+      case ConversionUnit.ounce:
         return 'oz';
-      case ConversionUnit.Shot:
+      case ConversionUnit.shot:
         return 'shots';
       default:
         return '';
@@ -133,12 +116,12 @@ class _ConversionSectionState extends State<ConversionSection> {
   }
 
   Widget _buildConversionButton(ConversionUnit unit, IconData icon, String label) {
-    bool isSelected = (_selectedUnit == unit);
+    final isSelected = _selectedUnit == unit;
 
     return Column(
       children: [
         IconButton(
-          icon: Icon(icon,color: isSelected ?   MemoColors.black : MemoColors.black.withOpacity(0.4)),
+          icon: Icon(icon, color: isSelected ? MemoColors.black : MemoColors.black.withOpacity(0.4)),
           onPressed: () {
             setState(() {
               _selectedUnit = unit;
@@ -148,15 +131,22 @@ class _ConversionSectionState extends State<ConversionSection> {
         ),
         Text(
           label,
-          style: TextStyle(fontSize: 14.0,color: isSelected ? MemoColors.black : MemoColors.black.withOpacity(0.4)),
+          style: TextStyle(
+            fontSize: 14.0,
+            color: isSelected ? MemoColors.black : MemoColors.black.withOpacity(0.4),
+          ),
         ),
       ],
     );
   }
 
-  void _loadMoreConversions(Cocktail cocktail) {
+  void _loadMoreConversions() {
     setState(() {
-      conversionsToShow.addAll([conversionsToShow.length + 1, conversionsToShow.length + 2, conversionsToShow.length + 3]);
+      conversionsToShow.addAll([
+        conversionsToShow.length + 1,
+        conversionsToShow.length + 2,
+        conversionsToShow.length + 3
+      ]);
     });
   }
 }

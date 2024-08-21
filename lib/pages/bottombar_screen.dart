@@ -16,21 +16,21 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    const SearchScreen(),
-    const CreateScreen(),
-    const FavoritesScreen(),
+  static const List<Widget> _widgetOptions = <Widget>[
+    SearchScreen(),
+    CreateScreen(),
+    FavoritesScreen(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
     });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -44,20 +44,20 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         physics: const NeverScrollableScrollPhysics(),
-        children: _widgetOptions, // Disable scrolling
+        children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.explore),
-            label: 'Esplora',
+            label: 'Cerca',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.create),
             label: 'Crea',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
+            icon: Icon(Icons.bookmark),
             label: 'Salvati',
           ),
         ],

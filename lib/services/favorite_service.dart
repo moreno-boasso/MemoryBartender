@@ -7,58 +7,71 @@ class FavoritesService {
   static const String _fattoKey = 'fatto';
 
   Future<void> addToDaProvare(Cocktail cocktail) async {
-    final prefs = await SharedPreferences.getInstance();
-    final daProvare = await getDaProvare();
-    if (!daProvare.any((c) => c.id == cocktail.id)) {
-      daProvare.add(cocktail);
-      prefs.setString(_daProvareKey, jsonEncode(daProvare.map((e) => e.toJson()).toList()));
-    }
+    await _addCocktail(_daProvareKey, cocktail);
   }
 
   Future<void> addToFatto(Cocktail cocktail) async {
-    final prefs = await SharedPreferences.getInstance();
-    final fatto = await getFatto();
-    if (!fatto.any((c) => c.id == cocktail.id)) {
-      fatto.add(cocktail);
-      prefs.setString(_fattoKey, jsonEncode(fatto.map((e) => e.toJson()).toList()));
-    }
+    await _addCocktail(_fattoKey, cocktail);
   }
 
   Future<void> removeFromDaProvare(String id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final daProvare = await getDaProvare();
-    daProvare.removeWhere((cocktail) => cocktail.id == id);
-    prefs.setString(_daProvareKey, jsonEncode(daProvare.map((e) => e.toJson()).toList()));
+    await _removeCocktail(_daProvareKey, id);
   }
 
   Future<void> removeFromFatto(String id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final fatto = await getFatto();
-    fatto.removeWhere((cocktail) => cocktail.id == id);
-    prefs.setString(_fattoKey, jsonEncode(fatto.map((e) => e.toJson()).toList()));
+    await _removeCocktail(_fattoKey, id);
   }
 
   Future<List<Cocktail>> getDaProvare() async {
-    final prefs = await SharedPreferences.getInstance();
-    final daProvareString = prefs.getString(_daProvareKey) ?? '[]';
-    final List<dynamic> daProvareJson = jsonDecode(daProvareString);
-    return daProvareJson.map((json) => Cocktail.fromJson(json)).toList();
+    return await _getCocktails(_daProvareKey);
   }
 
   Future<List<Cocktail>> getFatto() async {
-    final prefs = await SharedPreferences.getInstance();
-    final fattoString = prefs.getString(_fattoKey) ?? '[]';
-    final List<dynamic> fattoJson = jsonDecode(fattoString);
-    return fattoJson.map((json) => Cocktail.fromJson(json)).toList();
+    return await _getCocktails(_fattoKey);
   }
 
   Future<bool> isCocktailInDaProvare(String id) async {
-    final daProvare = await getDaProvare();
-    return daProvare.any((cocktail) => cocktail.id == id);
+    return await _isCocktailInList(_daProvareKey, id);
   }
 
   Future<bool> isCocktailInFatto(String id) async {
-    final fatto = await getFatto();
-    return fatto.any((cocktail) => cocktail.id == id);
+    return await _isCocktailInList(_fattoKey, id);
+  }
+
+  // Funzione privata per aggiungere un cocktail alla lista appropriata
+  Future<void> _addCocktail(String key, Cocktail cocktail) async {
+    final List<Cocktail> cocktails = await _getCocktails(key);
+    if (!cocktails.any((c) => c.id == cocktail.id)) {
+      cocktails.add(cocktail);
+      await _saveCocktails(key, cocktails);
+    }
+  }
+
+  // Funzione privata per rimuovere un cocktail dalla lista appropriata
+  Future<void> _removeCocktail(String key, String id) async {
+    final List<Cocktail> cocktails = await _getCocktails(key);
+    cocktails.removeWhere((cocktail) => cocktail.id == id);
+    await _saveCocktails(key, cocktails);
+  }
+
+  // Funzione privata per ottenere i cocktail da una specifica lista
+  Future<List<Cocktail>> _getCocktails(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String cocktailsString = prefs.getString(key) ?? '[]';
+    final List<dynamic> cocktailsJson = jsonDecode(cocktailsString);
+    return cocktailsJson.map((json) => Cocktail.fromJson(json)).toList();
+  }
+
+  // Funzione privata per salvare i cocktail in una specifica lista
+  Future<void> _saveCocktails(String key, List<Cocktail> cocktails) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String encodedData = jsonEncode(cocktails.map((c) => c.toJson()).toList());
+    await prefs.setString(key, encodedData);
+  }
+
+  // Funzione privata per verificare se un cocktail è in una specifica lista
+  Future<bool> _isCocktailInList(String key, String id) async {
+    final List<Cocktail> cocktails = await _getCocktails(key);
+    return cocktails.any((cocktail) => cocktail.id == id);
   }
 }

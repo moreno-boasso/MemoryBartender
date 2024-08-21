@@ -13,8 +13,8 @@ class FavoriteButton extends StatefulWidget {
 }
 
 class _FavoriteButtonState extends State<FavoriteButton> {
-  bool isInDaProvare = false;
-  bool isInFatto = false;
+  bool _isInDaProvare = false;
+  bool _isInFatto = false;
 
   @override
   void initState() {
@@ -23,20 +23,22 @@ class _FavoriteButtonState extends State<FavoriteButton> {
   }
 
   Future<void> _checkIfFavorite() async {
-    isInDaProvare = await FavoritesService().isCocktailInDaProvare(widget.cocktail.id);
-    isInFatto = await FavoritesService().isCocktailInFatto(widget.cocktail.id);
+    final favoritesService = FavoritesService();
+    _isInDaProvare = await favoritesService.isCocktailInDaProvare(widget.cocktail.id);
+    _isInFatto = await favoritesService.isCocktailInFatto(widget.cocktail.id);
     setState(() {});
   }
 
   Future<void> _updateFavorites(String category) async {
+    final favoritesService = FavoritesService();
     // Remove from both categories first
-    await FavoritesService().removeFromDaProvare(widget.cocktail.id);
-    await FavoritesService().removeFromFatto(widget.cocktail.id);
+    await favoritesService.removeFromDaProvare(widget.cocktail.id);
+    await favoritesService.removeFromFatto(widget.cocktail.id);
 
     if (category == 'Da Provare') {
-      await FavoritesService().addToDaProvare(widget.cocktail);
+      await favoritesService.addToDaProvare(widget.cocktail);
     } else if (category == 'Fatto') {
-      await FavoritesService().addToFatto(widget.cocktail);
+      await favoritesService.addToFatto(widget.cocktail);
     }
 
     await _checkIfFavorite();
@@ -44,13 +46,13 @@ class _FavoriteButtonState extends State<FavoriteButton> {
 
   @override
   Widget build(BuildContext context) {
-    IconData icon;
-    Color iconColor;
+    final IconData icon;
+    final Color iconColor;
 
-    if (isInFatto) {
+    if (_isInFatto) {
       icon = Icons.check;
       iconColor = Colors.green;
-    } else if (isInDaProvare) {
+    } else if (_isInDaProvare) {
       icon = Icons.access_time;
       iconColor = Colors.blue;
     } else {
@@ -61,49 +63,45 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     return Positioned(
       top: MediaQuery.of(context).size.height / 2 - 26,
       right: 25,
-      child: Stack(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: MemoColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  spreadRadius: 2,
-                  blurRadius: 6,
-                  offset: Offset(0, 3),
-                ),
-              ],
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: MemoColors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              spreadRadius: 2,
+              blurRadius: 6,
+              offset: Offset(0, 3),
             ),
-            child: Center(
-              child: PopupMenuButton<String>(
-                onSelected: (value) async {
-                  if (value != (isInDaProvare ? 'Da Provare' : isInFatto ? 'Fatto' : '')) {
-                    await _updateFavorites(value);
-                  }
-                },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'Da Provare',
-                    child: Text('Da Provare'),
-                  ),
-                  const PopupMenuItem(
-                    value: 'Fatto',
-                    child: Text('Fatto'),
-                  ),
-                ],
-                icon: Icon(
-                  icon,
-                  color: iconColor,
-                  size: 25,
-                ),
+          ],
+        ),
+        child: Center(
+          child: PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value != (_isInDaProvare ? 'Da Provare' : _isInFatto ? 'Fatto' : '')) {
+                await _updateFavorites(value);
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'Da Provare',
+                child: Text('Da Provare'),
               ),
+              const PopupMenuItem(
+                value: 'Fatto',
+                child: Text('Fatto'),
+              ),
+            ],
+            icon: Icon(
+              icon,
+              color: iconColor,
+              size: 25,
             ),
           ),
-        ],
+        ),
       ),
     );
   }

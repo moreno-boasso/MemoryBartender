@@ -14,9 +14,11 @@ class CreatedCocktailImageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double containerHeight = MediaQuery.of(context).size.height / 2;
+
     return Container(
       width: double.infinity,
-      height: MediaQuery.of(context).size.height / 2,
+      height: containerHeight,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(50)),
         boxShadow: [
@@ -27,17 +29,23 @@ class CreatedCocktailImageHeader extends StatelessWidget {
             offset: const Offset(0, 3),
           ),
         ],
-        image: cocktail.imageUrl.isNotEmpty
-            ? DecorationImage(
-          image: MemoryImage(_decodeBase64Image(cocktail.imageUrl)),
-          fit: BoxFit.cover,
-        )
-            : const DecorationImage(
-          image: AssetImage('assets/images/placeholder.png'),
-          fit: BoxFit.cover,
-        ),
+        image: _buildBackgroundImage(),
       ),
     );
+  }
+
+  DecorationImage _buildBackgroundImage() {
+    if (cocktail.imageUrl.isNotEmpty) {
+      return DecorationImage(
+        image: MemoryImage(_decodeBase64Image(cocktail.imageUrl)),
+        fit: BoxFit.cover,
+      );
+    } else {
+      return const DecorationImage(
+        image: AssetImage('assets/images/placeholder.png'),
+        fit: BoxFit.cover,
+      );
+    }
   }
 
   Uint8List _decodeBase64Image(String base64String) {

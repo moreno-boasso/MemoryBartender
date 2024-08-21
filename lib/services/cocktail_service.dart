@@ -7,89 +7,27 @@ class CocktailService {
   final String baseUrl = 'https://www.thecocktaildb.com/api/json/v1/1';
 
   Future<List<Cocktail>> getCocktailsByFirstLetter(String letterOrNumber) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/search.php?f=$letterOrNumber'),
-      );
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        final List<dynamic> drinks = data['drinks'];
-
-        List<Cocktail> cocktails = drinks.map((json) => Cocktail(
-          id: json['idDrink'],
-          name: json['strDrink'],
-          imageUrl: json['strDrinkThumb'],
-          isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-          ingredients: _getIngredients(json),
-          instructions: '', // Nessuna istruzione specifica per la ricerca per lettera
-        )).toList();
-        return cocktails;
-      } else {
-        throw Exception('Failed to load cocktails');
-      }
-    } catch (e) {
-      debugPrint('Error loading cocktails: $e');
-      throw Exception('Failed to load cocktails: $e');
-    }
+    return _fetchCocktails('$baseUrl/search.php?f=$letterOrNumber');
   }
 
   Future<List<Cocktail>> searchCocktailsByName(String name) async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/search.php?s=$name'));
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        final List<dynamic> drinks = data['drinks'];
-
-        List<Cocktail> cocktails = drinks.map((json) => Cocktail(
-          id: json['idDrink'],
-          name: json['strDrink'],
-          imageUrl: json['strDrinkThumb'],
-          isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-          ingredients: _getIngredients(json),
-          instructions: '', // Nessuna istruzione specifica per la ricerca per nome
-        )).toList();
-        return cocktails;
-      } else {
-        throw Exception('Failed to load cocktails');
-      }
-    } catch (e) {
-      debugPrint('Error loading cocktails: $e');
-      throw Exception('Failed to load cocktails: $e');
-    }
+    return _fetchCocktails('$baseUrl/search.php?s=$name');
   }
 
   Future<List<Cocktail>> searchCocktailsByIngredient(String ingredient) async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/filter.php?i=$ingredient'));
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        final List<dynamic> drinks = data['drinks'];
-
-        List<Cocktail> cocktails = drinks.map((json) => Cocktail(
-          id: json['idDrink'],
-          name: json['strDrink'],
-          imageUrl: json['strDrinkThumb'],
-          isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
-          ingredients: [], // filter.php non fornisce ingredienti
-          instructions: '', // Nessuna istruzione specifica per la ricerca per ingrediente
-        )).toList();
-        return cocktails;
-      } else {
-        throw Exception('Failed to load cocktails');
-      }
-    } catch (e) {
-      debugPrint('Error loading cocktails: $e');
-      throw Exception('Failed to load cocktails: $e');
-    }
+    return _fetchCocktails('$baseUrl/filter.php?i=$ingredient', withIngredients: false);
   }
-
 
   Future<Cocktail> getCocktailDetails(String id) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/lookup.php?i=$id'));
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        final dynamic drink = data['drinks'][0];
+        final dynamic drink = data['drinks']?.isNotEmpty == true ? data['drinks'][0] : null;
+
+        if (drink == null) {
+          throw Exception('Cocktail not found');
+        }
 
         return Cocktail(
           id: drink['idDrink'],
@@ -108,6 +46,29 @@ class CocktailService {
     }
   }
 
+  Future<List<Cocktail>> _fetchCocktails(String url, {bool withIngredients = true}) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final List<dynamic> drinks = data['drinks'] ?? [];
+
+        return drinks.map((json) => Cocktail(
+          id: json['idDrink'],
+          name: json['strDrink'],
+          imageUrl: json['strDrinkThumb'],
+          isAlcoholic: json['strAlcoholic'] == 'Alcoholic',
+          ingredients: withIngredients ? _getIngredients(json) : [],
+          instructions: '',
+        )).toList();
+      } else {
+        throw Exception('Failed to load cocktails');
+      }
+    } catch (e) {
+      debugPrint('Error loading cocktails: $e');
+      throw Exception('Failed to load cocktails: $e');
+    }
+  }
 
   List<Map<String, String>> _getIngredients(dynamic drink) {
     List<Map<String, String>> ingredients = [];

@@ -15,19 +15,18 @@ class CocktailDetailsDialog extends StatelessWidget {
       backgroundColor: MemoColors.white,
       surfaceTintColor: MemoColors.white,
       child: Stack(
+        clipBehavior: Clip.none,
         children: <Widget>[
           Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16.0),
-                  topRight: Radius.circular(16.0),
-                ),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
                 child: Image.network(
                   cocktail.imageUrl,
                   fit: BoxFit.cover,
-                  width: MediaQuery.of(context).size.width,
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.3,  // Fixed height for better appearance
                 ),
               ),
               Padding(
@@ -47,13 +46,19 @@ class CocktailDetailsDialog extends StatelessWidget {
             top: 10.0,
             right: 10.0,
             child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
+              onTap: () => Navigator.of(context).pop(),
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: MemoColors.white,
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: const Icon(
                   Icons.close_rounded,

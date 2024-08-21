@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:translator/translator.dart';
 import '../../styles/colors.dart';
@@ -17,17 +18,36 @@ class _CocktailInstructionsState extends State<CocktailInstructions> {
   bool isTranslated = false;
   bool isLoading = false;
 
+  final translator = GoogleTranslator();
+
+  @override
+  void initState() {
+    super.initState();
+    // Optionally initiate translation on widget load
+    // translateInstructions();
+  }
+
   Future<void> translateInstructions() async {
     setState(() {
       isLoading = true;
     });
-    final translator = GoogleTranslator();
-    var translation = await translator.translate(widget.instructions, to: 'it');
-    setState(() {
-      translatedText = translation.text;
-      isTranslated = true;
-      isLoading = false;
-    });
+
+    try {
+      final translation = await translator.translate(widget.instructions, to: 'it');
+      setState(() {
+        translatedText = translation.text;
+        isTranslated = true;
+      });
+    } catch (e) {
+      // Handle translation error
+      if (kDebugMode) {
+        print('Translation error: $e');
+      }
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void toggleTranslation() {
@@ -56,22 +76,21 @@ class _CocktailInstructionsState extends State<CocktailInstructions> {
         ),
         const SizedBox(height: 5),
         Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            const Spacer(),
-            Column(
-              children: [
-                TextButton(
-                  onPressed: isLoading ? null : toggleTranslation,
-                  style: TextButton.styleFrom(
-                    foregroundColor: MemoColors.black.withOpacity(0.4),
-                  ),
-                  child: isLoading
-                      ? const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(MemoColors.brownie),
-                  )
-                      : Text(isTranslated ? 'Mostra originale' : 'Traduci',style: const TextStyle(fontSize: 14),),
-                ),
-              ],
+            TextButton(
+              onPressed: isLoading ? null : toggleTranslation,
+              style: TextButton.styleFrom(
+                foregroundColor: MemoColors.black.withOpacity(0.4),
+              ),
+              child: isLoading
+                  ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(MemoColors.brownie),
+              )
+                  : Text(
+                isTranslated ? 'Mostra originale' : 'Traduci',
+                style: const TextStyle(fontSize: 14),
+              ),
             ),
           ],
         ),
